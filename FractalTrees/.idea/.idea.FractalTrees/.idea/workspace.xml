@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="da6b83c7-6137-4e06-900a-44f3db1b5d34" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/FractalCube.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="14">
+              <caret line="28" column="21" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="21" />
+              <folding>
+                <marker date="1545266675910" expanded="false" signature="6:117" ph="..." />
+                <marker date="1545266675910" expanded="true" signature="240:2585" ph="{...}" />
+                <marker date="1545266675910" expanded="true" signature="539:1260" ph="{...}" />
+                <marker date="1545266675910" expanded="true" signature="794:1244" ph="{...}" />
+                <marker date="1545266675910" expanded="true" signature="817:948" ph="/* child = new GameObject(); ... */" />
+                <marker date="1545266675910" expanded="true" signature="998:1221" ph="{...}" />
+                <marker date="1545266675910" expanded="true" signature="1322:2199" ph="{...}" />
+                <marker date="1545266675910" expanded="true" signature="2109:2192" ph="/* Debug.Log(transform.rotation); ... */" />
+                <marker date="1545266675910" expanded="true" signature="2314:2582" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/MeshCombiner.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="765">
+              <caret line="51" column="35" selection-start-line="51" selection-start-column="35" selection-end-line="51" selection-end-column="35" />
+              <folding>
+                <marker date="1545266675911" expanded="true" signature="6:121" ph="..." />
+                <marker date="1545266675911" expanded="true" signature="164:1391" ph="{...}" />
+                <marker date="1545266675911" expanded="true" signature="230:1389" ph="{...}" />
+                <marker date="1545266675911" expanded="true" signature="562:818" ph="{...}" />
+                <marker date="1545266675911" expanded="true" signature="1112:1383" ph="/* var job = new CombineMeshJob ... */" />
+                <marker date="1545266675911" expanded="true" signature="1428:2091" ph="{...}" />
+                <marker date="1545266675911" expanded="true" signature="1530:2089" ph="{...}" />
+                <marker date="1545266675911" expanded="true" signature="1752:2008" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/UnityAudioSpectrumExample.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-271">
+              <caret line="72" column="33" selection-start-line="72" selection-start-column="33" selection-end-line="72" selection-end-column="33" />
+              <folding>
+                <marker date="1545266675952" expanded="true" signature="6:179" ph="..." />
+                <marker date="1545266675952" expanded="true" signature="236:2624" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="579:935" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="815:928" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="954:1696" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="1130:1576" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="1586:1651" ph="/* mat.SetFloat(&quot;_Amount&quot;, bands[6]); ... */" />
+                <marker date="1545266675952" expanded="true" signature="1727:2622" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="1742:2192" ph="/* for (int i = 0; i &lt; bands.Length; i++) ... */" />
+                <marker date="1545266675952" expanded="true" signature="2390:2459" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="2667:3216" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="2777:3214" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="2830:3208" ph="{...}" />
+                <marker date="1545266675952" expanded="true" signature="3050:3128" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Placement.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="115" selection-start-line="115" selection-end-line="115" />
+              <folding>
+                <marker date="1545266675915" expanded="true" signature="6:173" ph="..." />
+                <marker date="1545266675915" expanded="true" signature="290:3196" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="427:2331" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="741:1458" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="924:1381" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="1188:1376" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="1409:1453" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="1471:2305" ph="/* var p = new NativeList&lt;Vector2&gt;(50000, Allocator.Persistent); ... */" />
+                <marker date="1545266675915" expanded="true" signature="2456:3194" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="2543:3175" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="2888:3155" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="2943:3150" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3007:3144" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3107:3137" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3234:6793" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3483:3584" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3622:3700" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3726:3825" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="3852:5938" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="4168:5749" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="4181:4452" ph="/* int spawnIndex = Random.Range(0,spawnPoints.Count); ... */" />
+                <marker date="1545266675915" expanded="true" signature="4691:5673" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="4701:4805" ph="/* float angle = Random.value * Mathf.PI * 2; ... */" />
+                <marker date="1545266675915" expanded="true" signature="4860:5043" ph="/* Debug.Log(((float) RanFloat(0,1))); ... */" />
+                <marker date="1545266675915" expanded="true" signature="5480:5668" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="5701:5745" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="5869:5935" ph="/* foreach (var v in validPoints) ... */" />
+                <marker date="1545266675915" expanded="true" signature="6053:6791" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="6140:6772" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="6485:6752" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="6540:6747" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="6604:6741" ph="{...}" />
+                <marker date="1545266675915" expanded="true" signature="6704:6734" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/AudioReactiveShader.shader">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="780">
+              <caret line="52" column="88" selection-start-line="52" selection-start-column="88" selection-end-line="52" selection-end-column="88" />
+              <folding>
+                <marker date="1545266675906" expanded="true" signature="36:2473" ph="{...}" />
+                <marker date="1545266675906" expanded="true" signature="57:463" ph="{...}" />
+                <marker date="1545266675906" expanded="true" signature="482:2448" ph="{...}" />
+                <marker date="1545266675906" expanded="true" signature="557:2437" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/UnityAudioSpectrumExample.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/MeshCombiner.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Placement.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/FractalCube.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/AudioReactiveShader.shader" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/TreeECS/TreeECS.cs" />
+        <option value="$PROJECT_DIR$/Assets/NewUnlitShader.shader" />
+        <option value="$PROJECT_DIR$/Assets/NewSurfaceShader.shader" />
+        <option value="$PROJECT_DIR$/Assets/AudioReactiveUnlit.shader" />
+        <option value="$PROJECT_DIR$/Assets/SimplePlane.cs" />
+        <option value="$PROJECT_DIR$/Assets/TreeECS/TreeBootstrap.cs" />
+        <option value="$PROJECT_DIR$/Assets/MeshCombiner.cs" />
+        <option value="$PROJECT_DIR$/Assets/FractalCube.cs" />
+        <option value="$PROJECT_DIR$/Assets/UnityAudioSpectrumExample.cs" />
+        <option value="$PROJECT_DIR$/Assets/AudioReactiveShader.shader" />
+        <option value="$PROJECT_DIR$/Assets/Placement.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="InvalidFacetManager">
+    <ignored-facets>
+      <facet id="riderModule/invalid/Default Android Facet" />
+    </ignored-facets>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-1929" />
+    <option name="y" value="-9" />
+    <option name="width" value="1938" />
+    <option name="height" value="1048" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="UnityExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+      <pane id="AssemblyExplorer" />
+      <pane id="FileSystemExplorer" />
+      <pane id="UnityExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Project" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="48f920db:UnityExplorerNode$AssetsRoot" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-hidden-items" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Attach to Unity Editor.Attach to Unity Editor" />
+      <item itemvalue="Attach to Unity Editor.Attach to Unity Editor &amp; Play" />
+    </list>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="da6b83c7-6137-4e06-900a-44f3db1b5d34" name="Default Changelist" comment="" />
+      <created>1544102387939</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1544102387939</updated>
+      <workItem from="1544102391660" duration="9582000" />
+      <workItem from="1544968424264" duration="1628000" />
+      <workItem from="1544970249768" duration="428000" />
+      <workItem from="1544985386357" duration="5294000" />
+      <workItem from="1544994044673" duration="179000" />
+      <workItem from="1545047879755" duration="599000" />
+      <workItem from="1545145119811" duration="2652000" />
+      <workItem from="1545148481821" duration="52000" />
+      <workItem from="1545152832362" duration="6375000" />
+      <workItem from="1545165600068" duration="4427000" />
+      <workItem from="1545230833810" duration="2910000" />
+      <workItem from="1545234181737" duration="2169000" />
+      <workItem from="1545240157860" duration="5211000" />
+      <workItem from="1545249904728" duration="3156000" />
+      <workItem from="1545253521758" duration="13435000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="58097000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1927" y="-7" width="1550" height="838" extended-state="6" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18322147" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info id="Image Layers" order="3" />
+      <window_info id="Capture Tool" order="4" />
+      <window_info id="Captures" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.3286119" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="NuGet" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unity" order="10" />
+      <window_info anchor="bottom" id="Unit Tests" order="11" />
+      <window_info anchor="bottom" id="Terminal" order="12" />
+      <window_info anchor="bottom" id="Event Log" order="13" side_tool="true" weight="0.32827735" />
+      <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Performance Profiler" order="15" />
+      <window_info anchor="bottom" id="Logcat" order="16" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Errors In Solution" order="3" />
+      <window_info anchor="right" id="Unit Tests Coverage" order="4" />
+      <window_info anchor="right" id="Capture Analysis" order="5" />
+      <window_info anchor="right" id="Device File Explorer" order="6" side_tool="true" />
+    </layout>
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Assets/FractalTreesECS.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/TreeECS/FractalTreesECS.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/TreeECS/FractalData.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/TreeECS/TreeECS.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/NewSurfaceShader.shader" />
+    <entry file="file://$PROJECT_DIR$/Temp/Compiled-Custom-AudioReactiveUnlit.shader" />
+    <entry file="file://$PROJECT_DIR$/Assets/NewUnlitShader.shader" />
+    <entry file="file://$PROJECT_DIR$/Temp/Compiled-Unlit-AudioReactiveUnlit.shader" />
+    <entry file="file://$PROJECT_DIR$/Temp/Compiled-Custom-AudioReactiveShader.shader" />
+    <entry file="file://$PROJECT_DIR$/Assets/AudioReactiveUnlit.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="37" column="12" selection-start-line="37" selection-start-column="12" selection-end-line="37" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SimplePlane.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="5" lean-forward="true" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/MeshCombiner.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="51" column="35" selection-start-line="51" selection-start-column="35" selection-end-line="51" selection-end-column="35" />
+          <folding>
+            <marker date="1545266675911" expanded="true" signature="6:121" ph="..." />
+            <marker date="1545266675911" expanded="true" signature="164:1391" ph="{...}" />
+            <marker date="1545266675911" expanded="true" signature="230:1389" ph="{...}" />
+            <marker date="1545266675911" expanded="true" signature="562:818" ph="{...}" />
+            <marker date="1545266675911" expanded="true" signature="1112:1383" ph="/* var job = new CombineMeshJob ... */" />
+            <marker date="1545266675911" expanded="true" signature="1428:2091" ph="{...}" />
+            <marker date="1545266675911" expanded="true" signature="1530:2089" ph="{...}" />
+            <marker date="1545266675911" expanded="true" signature="1752:2008" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/TreeECS/TreeBootstrap.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="112" column="10" selection-start-line="112" selection-start-column="10" selection-end-line="112" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/UnityAudioSpectrumExample.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-271">
+          <caret line="72" column="33" selection-start-line="72" selection-start-column="33" selection-end-line="72" selection-end-column="33" />
+          <folding>
+            <marker date="1545266675952" expanded="true" signature="6:179" ph="..." />
+            <marker date="1545266675952" expanded="true" signature="236:2624" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="579:935" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="815:928" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="954:1696" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="1130:1576" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="1586:1651" ph="/* mat.SetFloat(&quot;_Amount&quot;, bands[6]); ... */" />
+            <marker date="1545266675952" expanded="true" signature="1727:2622" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="1742:2192" ph="/* for (int i = 0; i &lt; bands.Length; i++) ... */" />
+            <marker date="1545266675952" expanded="true" signature="2390:2459" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="2667:3216" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="2777:3214" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="2830:3208" ph="{...}" />
+            <marker date="1545266675952" expanded="true" signature="3050:3128" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/AudioReactiveShader.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="780">
+          <caret line="52" column="88" selection-start-line="52" selection-start-column="88" selection-end-line="52" selection-end-column="88" />
+          <folding>
+            <marker date="1545266675906" expanded="true" signature="36:2473" ph="{...}" />
+            <marker date="1545266675906" expanded="true" signature="57:463" ph="{...}" />
+            <marker date="1545266675906" expanded="true" signature="482:2448" ph="{...}" />
+            <marker date="1545266675906" expanded="true" signature="557:2437" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Placement.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="115" selection-start-line="115" selection-end-line="115" />
+          <folding>
+            <marker date="1545266675915" expanded="true" signature="6:173" ph="..." />
+            <marker date="1545266675915" expanded="true" signature="290:3196" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="427:2331" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="741:1458" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="924:1381" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="1188:1376" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="1409:1453" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="1471:2305" ph="/* var p = new NativeList&lt;Vector2&gt;(50000, Allocator.Persistent); ... */" />
+            <marker date="1545266675915" expanded="true" signature="2456:3194" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="2543:3175" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="2888:3155" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="2943:3150" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3007:3144" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3107:3137" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3234:6793" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3483:3584" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3622:3700" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3726:3825" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="3852:5938" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="4168:5749" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="4181:4452" ph="/* int spawnIndex = Random.Range(0,spawnPoints.Count); ... */" />
+            <marker date="1545266675915" expanded="true" signature="4691:5673" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="4701:4805" ph="/* float angle = Random.value * Mathf.PI * 2; ... */" />
+            <marker date="1545266675915" expanded="true" signature="4860:5043" ph="/* Debug.Log(((float) RanFloat(0,1))); ... */" />
+            <marker date="1545266675915" expanded="true" signature="5480:5668" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="5701:5745" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="5869:5935" ph="/* foreach (var v in validPoints) ... */" />
+            <marker date="1545266675915" expanded="true" signature="6053:6791" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="6140:6772" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="6485:6752" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="6540:6747" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="6604:6741" ph="{...}" />
+            <marker date="1545266675915" expanded="true" signature="6704:6734" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/FractalCube.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="28" column="21" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="21" />
+          <folding>
+            <marker date="1545266675910" expanded="false" signature="6:117" ph="..." />
+            <marker date="1545266675910" expanded="true" signature="240:2585" ph="{...}" />
+            <marker date="1545266675910" expanded="true" signature="539:1260" ph="{...}" />
+            <marker date="1545266675910" expanded="true" signature="794:1244" ph="{...}" />
+            <marker date="1545266675910" expanded="true" signature="817:948" ph="/* child = new GameObject(); ... */" />
+            <marker date="1545266675910" expanded="true" signature="998:1221" ph="{...}" />
+            <marker date="1545266675910" expanded="true" signature="1322:2199" ph="{...}" />
+            <marker date="1545266675910" expanded="true" signature="2109:2192" ph="/* Debug.Log(transform.rotation); ... */" />
+            <marker date="1545266675910" expanded="true" signature="2314:2582" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
