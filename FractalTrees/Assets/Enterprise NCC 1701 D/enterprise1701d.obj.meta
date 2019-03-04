@@ -1,0 +1,142 @@
+fileFormatVersion: 2
+guid: 9740958f8952ee7448e23ada61f34fa8
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: default
+    100002: //RootNode
+    400000: default
+    400002: //RootNode
+    2100000: gxmain_gxtop5
+    2100002: gxmain_gxcol5.jpg
+    2100004: gxmain_gxtop10.jpg
+    2100006: gxmain_gxoblo.jpg
+    2100008: gxmain_gxtop14.jpg
+    2100010: gxmain_gxtop8.jpg
+    2100012: gxmain_gxtop8_0.jpg
+    2100014: gxlight1_gxlight1.jpg
+    2100016: gxwhite_gxwhite.jpg
+    2100018: gxmain_gxbottom.jpg
+    2100020: gxmain
+    2100022: gxmain_gxcol4.jpg
+    2100024: _gxcol4.jpg
+    2100026: _gxcol5.jpg
+    2100028: gxmain_gxtop2.jpg
+    2100030: gxmain_gxtop4
+    2100032: gxmain_gxtop6
+    2100034: gxmain_gxcircle.jpg
+    2100036: gxmain_gxcol1.jpg
+    2100038: gxmain_gxred.jpg
+    2100040: gxmain_gxbottom4.jpg
+    2100042: gxmain_gxtop10_1.jpg
+    2100044: gxmain_gxtop13.jpg
+    2100046: gxtop12_gxtop12
+    2100048: gxyellow_gxyellow.jpg
+    2100050: gxmain_gxyellow.jpg
+    2100052: gxmain_gxwhite.jpg
+    2100054: gxmain_gxbottom6.jpg
+    2100056: gxmain_gxtop1_1.jpg
+    2100058: gxfront2_gxfront2.jpg
+    2100060: gxmain_gxtop7.jpg
+    2100062: gxmain_gxbottom1.jpg
+    2100064: gxmain_gxbottom3.jpg
+    2100066: gxmain_gxbottom5.jpg
+    2100068: gxmain_gxbottom7.jpg
+    2100070: gxmain_gxtop9.jpg
+    2100072: gxmain_gxlines.jpg
+    2100074: gxmain_gxcol0.jpg
+    2100076: gxmain_gxcol2.jpg
+    2100078: gxmain_gxtop3
+    2100080: gxmain_gxcol3.jpg
+    2100082: gxmain_gxfront1.jpg
+    2100084: gxmain_gxtop.jpg
+    2100086: gxmain_gxtop1.jpg
+    2300000: default
+    3300000: default
+    4300000: default
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
