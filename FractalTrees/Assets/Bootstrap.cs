@@ -18,7 +18,7 @@ public class Bootstrap : MonoBehaviour
     private static EntityArchetype targetArchetype;
     private static EntityArchetype enemyArchetype;
 
-    public static EntityManager entityManager;
+    public EntityManager entityManager;
     public static EntityCommandBuffer entityCommandBuffer;
     void Start()
     {
@@ -35,7 +35,7 @@ public class Bootstrap : MonoBehaviour
         Entity target = entityManager.CreateEntity(targetArchetype);
         entityManager.SetComponentData(target, new Position { Value = targetStartPos });
         entityManager.SetComponentData(target, new Rotation() { Value = quaternion.identity });
-        entityManager.SetComponentData(target, new Scale() { Value = new float3(1.0f, 1.0f, 1.0f) });
+        entityManager.SetComponentData(target, new Scale() { Value = new float3(6.0f, 6.0f, 6.0f) });
         entityManager.SetSharedComponentData(target, targetMesh);
 
 
@@ -72,15 +72,15 @@ public class Bootstrap : MonoBehaviour
         );
     }
 }
-
-public struct TargetData :IComponentData
+[Serializable]
+public struct TargetData : IComponentData
 {
     public float movementSpeed;
     public float slowingDistance;
 }
 
 [Serializable]
-public struct EnemyData :IComponentData
+public struct EnemyData : IComponentData
 {
     public float movementSpeed;
     public float slowingDistance;
@@ -90,3 +90,5 @@ public struct EnemyData :IComponentData
     public Vector3 velocity;
     public float mass;
 }
+
+
