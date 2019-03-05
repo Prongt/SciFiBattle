@@ -129,7 +129,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 687217793}
-  - component: {fileID: 687217792}
+  - component: {fileID: 687217794}
+  - component: {fileID: 687217795}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -137,43 +138,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &687217792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 687217791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ecad68044063a540a495b89a8fb6744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetMesh:
-    mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-    material: {fileID: 2100000, guid: e9ef4db6307c8fe4ab6432cab0cc3ccd, type: 2}
-    subMesh: 0
-    layer: 0
-    castShadows: 0
-    receiveShadows: 0
-  enemyMesh:
-    mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    material: {fileID: 2100000, guid: 52c16644eb47177459dae4378e683406, type: 2}
-    subMesh: 0
-    layer: 0
-    castShadows: 0
-    receiveShadows: 0
-  targetStartPos: {x: -15, y: 0, z: -15}
-  enemyStartPos: {x: 5, y: 5, z: 5}
-  enemyCount: 10000
-  enemyData:
-    movementSpeed: 3
-    slowingDistance: 2
-    minNeighbourDist: 0
-    force: {x: 0, y: 0, z: 0}
-    acceleration: {x: 0, y: 0, z: 0}
-    velocity: {x: 0, y: 0, z: 0}
-    mass: 0
 --- !u!4 &687217793
 Transform:
   m_ObjectHideFlags: 0
@@ -188,6 +152,41 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &687217794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687217791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e8800c12647a442a793eb34289aaa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 8163520305878139868, guid: cf2ce755e1a6d0a499aaf545ddd5994c, type: 3}
+  spawnCount: 10
+  enemyData:
+    movementSpeed: 3
+    slowingDistance: 2
+    minNeighbourDist: 0
+    force: {x: 0, y: 0, z: 0}
+    acceleration: {x: 0, y: 0, z: 0}
+    velocity: {x: 0, y: 0, z: 0}
+    mass: 0
+--- !u!114 &687217795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687217791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ConversionMode: 0
 --- !u!1 &849718782
 GameObject:
   m_ObjectHideFlags: 0
