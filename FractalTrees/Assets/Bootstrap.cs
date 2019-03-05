@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
+using System;
 using Random = UnityEngine.Random; 
 public class Bootstrap : MonoBehaviour
 {
@@ -12,12 +13,17 @@ public class Bootstrap : MonoBehaviour
     public Vector3 enemyStartPos;
     public int enemyCount = 1;
 
+    [SerializeField] public EnemyData enemyData;
+
     private static EntityArchetype targetArchetype;
     private static EntityArchetype enemyArchetype;
 
+    public static EntityManager entityManager;
+    public static EntityCommandBuffer entityCommandBuffer;
     void Start()
     {
-        var entityManager = World.Active.GetOrCreateManager<EntityManager>();
+        entityManager = World.Active.GetOrCreateManager<EntityManager>();
+        entityCommandBuffer = new EntityCommandBuffer();
         CreateArchetypes(entityManager);
         CreateEntities(entityManager);
     }
@@ -44,6 +50,7 @@ public class Bootstrap : MonoBehaviour
             entityManager.SetComponentData(enemy, new Rotation() { Value = quaternion.identity });
             entityManager.SetComponentData(enemy, new Scale() { Value = new float3(1.0f, 1.0f, 1.0f) });
             entityManager.SetSharedComponentData(enemy, enemyMesh);
+            entityManager.SetComponentData(enemy, enemyData);
         }
     }
 
@@ -68,10 +75,13 @@ public class Bootstrap : MonoBehaviour
 
 public struct TargetData :IComponentData
 {
-
+    public float movementSpeed;
+    public float slowingDistance;
 }
 
+[Serializable]
 public struct EnemyData :IComponentData
 {
-
+    public float movementSpeed;
+    public float slowingDistance;
 }
