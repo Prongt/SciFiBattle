@@ -25,7 +25,7 @@ public class BoidECS : JobComponentSystem
 
     [Inject] private Target targets;
     [Inject] private Enemy enemies;
-    [Inject] private ComponentDataFromEntity<Position> position;
+    [Inject] private ComponentDataFromEntity<Translation> position;
     [Inject] private ComponentDataFromEntity<EnemyData> enemyData;
 
     protected override JobHandle OnUpdate(JobHandle handle)
@@ -57,7 +57,7 @@ public class BoidECS : JobComponentSystem
     {
         public float deltaTime;
         public ComponentDataFromEntity<EnemyData> enemyData;
-        public ComponentDataFromEntity<Position> position;
+        public ComponentDataFromEntity<Translation> position;
         [ReadOnly] public EntityArray targetsArray;
         [ReadOnly] public EntityArray enemiesArray;
 
@@ -94,7 +94,7 @@ public class BoidECS : JobComponentSystem
                 float clamped = Mathf.Min(ramped, moveSpeed);
                 var desired = clamped * (dir / distance);
 
-                var enemyPos = position[enemiesArray[enemyIndex]];
+                Translation enemyPos = position[enemiesArray[enemyIndex]];
                 enemyPos.Value += desired * deltaTime;
                 position[enemiesArray[enemyIndex]] = enemyPos;
             }
