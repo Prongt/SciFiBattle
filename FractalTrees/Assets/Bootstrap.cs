@@ -3,7 +3,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
-
+using Random = UnityEngine.Random; 
 public class Bootstrap : MonoBehaviour
 {
     public MeshInstanceRenderer targetMesh;
@@ -36,7 +36,11 @@ public class Bootstrap : MonoBehaviour
         for (int i = 0; i < enemyCount; i++)
         {
             Entity enemy = entityManager.CreateEntity(enemyArchetype);
-            entityManager.SetComponentData(enemy, new Position { Value = enemyStartPos });
+            entityManager.SetComponentData(enemy, new Position
+            {
+                Value = new float3(Random.Range(-10.0f, 10.0f),
+                    Random.Range(-10.0f, 10.0f), Random.Range(-10.0f, 10.0f))
+            });
             entityManager.SetComponentData(enemy, new Rotation() { Value = quaternion.identity });
             entityManager.SetComponentData(enemy, new Scale() { Value = new float3(1.0f, 1.0f, 1.0f) });
             entityManager.SetSharedComponentData(enemy, enemyMesh);
