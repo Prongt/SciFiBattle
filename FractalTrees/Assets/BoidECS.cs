@@ -10,8 +10,6 @@ using UnityEngine;
 
 public class BoidECS : JobComponentSystem
 {
-    
-
     private struct Target
     {
         [ReadOnly] public ComponentDataArray<TargetData> targetData;
@@ -29,9 +27,9 @@ public class BoidECS : JobComponentSystem
     [Inject] private ComponentDataFromEntity<Position> position;
     [Inject] private ComponentDataFromEntity<EnemyData> enemyData;
 
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    protected override JobHandle OnUpdate(JobHandle handle)
     {
-        return new ArriveJob()
+        return new BoidJob()
         {
             deltaTime = Time.deltaTime,
             enemyData = enemyData,
@@ -39,7 +37,7 @@ public class BoidECS : JobComponentSystem
             targetsArray = targets.targets,
             enemiesArray = enemies.enemies,
 
-        }.Schedule(inputDeps);
+        }.Schedule(handle);
     }
 
     public static void ScheduleDestroyJob(Entity entityToDestroy)
@@ -53,9 +51,8 @@ public class BoidECS : JobComponentSystem
     }
 
 
-
     [BurstCompile]
-    private struct ArriveJob : IJob
+    private struct BoidJob : IJob
     {
         public float deltaTime;
         public ComponentDataFromEntity<EnemyData> enemyData;
@@ -63,33 +60,65 @@ public class BoidECS : JobComponentSystem
         [ReadOnly] public EntityArray targetsArray;
         [ReadOnly] public EntityArray enemiesArray;
 
+        private float moveSpeed;
+        private float slowingDist;
+
         public void Execute()
         {
+            moveSpeed = enemyData[enemiesArray[0]].movementSpeed;
+            slowingDist = enemyData[enemiesArray[0]].slowingDistance;
             for (int i = 0; i < enemiesArray.Length; i++)
             {
                 for (int j = 0; j < targetsArray.Length; j++)
                 {
-                    var dir = position[targetsArray[j]].Value - position[enemiesArray[i]].Value;
-                    var moveSpeed = enemyData[enemiesArray[i]].movementSpeed;
-                    var slowingDist = enemyData[enemiesArray[i]].slowingDistance;
-
-                    float distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
-                    if (distance < 0.1f)
-                    {
-                        //BoidECS.ScheduleDestroyJob(enemiesArray[i]);
-                    }
-                    else
-                    {
-                        float ramped = moveSpeed * (distance / slowingDist);
-                        float clamped = Mathf.Min(ramped, moveSpeed);
-                        var desired = clamped * (dir / distance);
-
-                        var enemyPos = position[enemiesArray[i]];
-                        enemyPos.Value += desired * deltaTime;
-                        position[enemiesArray[i]] = enemyPos;
-                    }
+                    Arrive(i, j);
                 }
             }
+        }
+
+        void Arrive(int enemyIndex, int targetIndex)
+        {
+            var dir = position[targetsArray[targetIndex]].Value - position[enemiesArray[enemyIndex]].Value;
+            //var moveSpeed = enemyData[enemiesArray[enemyIndex]].movementSpeed;
+            //var slowingDist = enemyData[enemiesArray[enemyIndex]].slowingDistance;
+
+            float distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
+            if (distance < 0.1f)
+            {
+                //BoidECS.ScheduleDestroyJob(enemiesArray[i]);
+            }
+            else
+            {
+                float ramped = moveSpeed * (distance / slowingDist);
+                float clamped = Mathf.Min(ramped, moveSpeed);
+                var desired = clamped * (dir / distance);
+
+                var enemyPos = position[enemiesArray[enemyIndex]];
+                enemyPos.Value += desired * deltaTime;
+                position[enemiesArray[enemyIndex]] = enemyPos;
+            }
+        }
+
+        void Allignment(int enemyIndex)
+        {
+            Vector3 pos;
+             int neighbourCount = 0;
+
+             for (int i = 0; i < enemiesArray.Length; i++)
+             {
+                 if (i == enemyIndex)
+                 {
+                     continue;
+                }
+                 else
+                 {
+                     if (Vector3.Distance(position[enemiesArray[i]].Value, position[enemiesArray[enemyIndex]].Value) < enemyData[enemiesArray[enemyIndex]].minNeighbourDist)
+                     {
+
+                         neighbourCount++;
+                     }
+                 }
+             }
         }
     }
 

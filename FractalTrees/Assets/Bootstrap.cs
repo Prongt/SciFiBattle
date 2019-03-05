@@ -44,8 +44,8 @@ public class Bootstrap : MonoBehaviour
             Entity enemy = entityManager.CreateEntity(enemyArchetype);
             entityManager.SetComponentData(enemy, new Position
             {
-                Value = new float3(Random.Range(-10.0f, 10.0f),
-                    Random.Range(-10.0f, 10.0f), Random.Range(-10.0f, 10.0f))
+                Value = new float3(Random.Range(-100.0f, 100.0f),
+                    Random.Range(-100.0f, 100.0f), Random.Range(-100.0f, 100.0f))
             });
             entityManager.SetComponentData(enemy, new Rotation() { Value = quaternion.identity });
             entityManager.SetComponentData(enemy, new Scale() { Value = new float3(1.0f, 1.0f, 1.0f) });
@@ -84,4 +84,9 @@ public struct EnemyData :IComponentData
 {
     public float movementSpeed;
     public float slowingDistance;
+    public float minNeighbourDist;
+    public Vector3 force;
+    public Vector3 acceleration;
+    public Vector3 velocity;
+    public float mass;
 }
