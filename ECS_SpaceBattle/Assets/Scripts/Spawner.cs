@@ -1,56 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Jobs;
-using Unity.Transforms;
 using Unity.Mathematics;
-using UnityEngine;
-using Random = UnityEngine.Random;
+using Unity.Transforms;
 
 public class Spawner : JobComponentSystem
 {
     public EndSimulationEntityCommandBufferSystem entityCommandBuffer;
-    public static EntityManager entityManager;
+
     protected override void OnCreateManager()
     {
+        //Creates the command buffer
         entityCommandBuffer = World.Active.GetOrCreateManager<EndSimulationEntityCommandBufferSystem>();
-
-        entityManager = World.Active.GetOrCreateManager<EntityManager>();
-
-    }
-    
-    private struct SpawnJob : IJobProcessComponentDataWithEntity<EnemySpawnData, LocalToWorld, EnemyData>
-    {
-        public EntityCommandBuffer CommandBuffer;
-
-        public void Execute(Entity entity, int index, ref EnemySpawnData spawnData, ref LocalToWorld location, ref EnemyData enemyData)
-        {
-            for (int x = 0; x < spawnData.countX; x++)
-            {
-                for (int y = 0; y < spawnData.countY; y++)
-                {
-                    var instance = CommandBuffer.Instantiate(spawnData.prefab);
-                    var position = math.transform(location.Value, 
-                        new float3(x * 1.3F, noise.cnoise(new float2(x, y) * 0.21F) * 2, y * 1.3F));
-
-                    CommandBuffer.SetComponent(instance, new Translation {Value = position});
-
-                    //entityManager.AddComponent(instance, new ComponentType(typeof(EnemyData)));
-
-
-                    //CommandBuffer.SetComponent(instance, enemyData);
-
-                    CommandBuffer.AddComponent(instance, enemyData);
-                }
-
-            }
-            CommandBuffer.DestroyEntity(entity);
-        }
     }
 
+    //Calls the spawn job once on startup
     protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
         var job = new SpawnJob
@@ -61,5 +24,28 @@ public class Spawner : JobComponentSystem
         entityCommandBuffer.AddJobHandleForProducer(job);
 
         return job;
+    }
+
+
+    private struct SpawnJob : IJobProcessComponentDataWithEntity<EnemySpawnData, LocalToWorld, EnemyData>
+    {
+        public EntityCommandBuffer CommandBuffer;
+
+        public void Execute(Entity entity, int index, ref EnemySpawnData spawnData, ref LocalToWorld location,
+            ref EnemyData enemyData)
+        {
+            for (var x = 0; x < spawnData.countX; x++)
+            for (var y = 0; y < spawnData.countY; y++)
+            {
+                var instance = CommandBuffer.Instantiate(spawnData.prefab);
+                var position = math.transform(location.Value,
+                    new float3(x * 1.3F, noise.cnoise(new float2(x, y) * 0.21F) * 2, y * 1.3F));
+
+                CommandBuffer.SetComponent(instance, new Translation {Value = position});
+
+                CommandBuffer.AddComponent(instance, enemyData);
+            }
+            CommandBuffer.DestroyEntity(entity);
+        }
     }
 }

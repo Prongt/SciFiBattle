@@ -1,25 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
-using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class TargetSpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 {
-    [SerializeField] public TargetSpawnDataLocal targetSpawnDataLocal;
     [SerializeField] public TargetData targetData;
-
-    public void DeclareReferencedPrefabs(List<GameObject> gameObjects)
-    {
-        gameObjects.Add(targetSpawnDataLocal.prefab);
-    }
+    [SerializeField] public TargetSpawnDataLocal targetSpawnDataLocal;
 
 
     public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
@@ -34,14 +22,18 @@ public class TargetSpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, 
         dstManager.AddComponentData(entity, spawnerData);
 
 
-
         var tData = new TargetData
         {
             movementSpeed = targetData.movementSpeed,
-            slowingDistance = targetData.slowingDistance,
+            slowingDistance = targetData.slowingDistance
         };
 
         dstManager.AddComponentData(entity, tData);
+    }
+
+    public void DeclareReferencedPrefabs(List<GameObject> gameObjects)
+    {
+        gameObjects.Add(targetSpawnDataLocal.prefab);
     }
 
     [Serializable]

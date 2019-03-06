@@ -6,8 +6,6 @@ using System;
 
 public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 {
-
-
     [SerializeField] public EnemySpawnDataLocal enemySpawnData;
     [SerializeField] public EnemyData enemyData;
 
@@ -15,7 +13,6 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
     {
         gameObjects.Add(enemySpawnData.prefab);
     }
-
 
     public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
     {
@@ -37,7 +34,6 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
             velocity = enemyData.velocity,
             mass = enemyData.mass
         };
-
         dstManager.AddComponentData(entity, eData);
     }
 
