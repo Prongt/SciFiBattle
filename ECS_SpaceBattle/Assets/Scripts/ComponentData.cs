@@ -2,8 +2,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace ComponentData
-{
+
     [Serializable]
     public struct TargetData : IComponentData
     {
@@ -26,6 +25,7 @@ namespace ComponentData
     public struct EnemySpawnData : IComponentData
     {
         public Entity prefab;
-        public int spawnCount;
+        public int countX;
+        public int countY;
     }
-}
+

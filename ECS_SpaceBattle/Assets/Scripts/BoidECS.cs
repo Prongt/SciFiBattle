@@ -7,7 +7,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
-using ComponentData;
+
 
 public class BoidECS : JobComponentSystem
 {

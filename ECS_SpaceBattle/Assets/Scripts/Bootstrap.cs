@@ -7,7 +7,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
-using ComponentData;
+
 using Unity.Rendering;
 using UnityEngine.Rendering;
 using System;
