@@ -20,7 +20,6 @@ public class Spawner : JobComponentSystem
 
         entityManager = World.Active.GetOrCreateManager<EntityManager>();
 
-        //entityCommandBuffer.Instantiate(SetData.enemyData.prefab);
     }
     
     private struct SpawnJob : IJobProcessComponentDataWithEntity<EnemySpawnData, LocalToWorld, EnemyData>

@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 
@@ -27,5 +28,11 @@ using UnityEngine;
         public Entity prefab;
         public int countX;
         public int countY;
+    }
+
+    public struct TargetSpawnData : IComponentData
+    {
+        public Entity prefab;
+        public float3 spawnPos;
     }
 

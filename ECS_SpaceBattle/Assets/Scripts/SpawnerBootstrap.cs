@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using System;
 
 public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 {
 
-    public GameObject prefab;
-    public int countX;
-    public int countY;
+
+    [SerializeField] public EnemySpawnDataLocal enemySpawnData;
     [SerializeField] public EnemyData enemyData;
 
     public void DeclareReferencedPrefabs(List<GameObject> gameObjects)
     {
-        gameObjects.Add(prefab);
+        gameObjects.Add(enemySpawnData.prefab);
     }
 
 
@@ -21,14 +21,12 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
     {
         var spawnerData = new EnemySpawnData
         {
-            prefab = conversionSystem.GetPrimaryEntity(prefab),
-            countX = countX,
-            countY = countY
+            prefab = conversionSystem.GetPrimaryEntity(enemySpawnData.prefab),
+            countX = enemySpawnData.countX,
+            countY = enemySpawnData.countY
         };
         dstManager.AddComponentData(entity, spawnerData);
 
-
-        //dstManager.AddComponent(entity, new ComponentType(typeof(EnemyData)));
         var eData = new EnemyData
         {
             movementSpeed = enemyData.movementSpeed,
@@ -41,6 +39,13 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
         };
 
         dstManager.AddComponentData(entity, eData);
+    }
 
+    [Serializable]
+    public struct EnemySpawnDataLocal
+    {
+        public GameObject prefab;
+        public int countX;
+        public int countY;
     }
 }
