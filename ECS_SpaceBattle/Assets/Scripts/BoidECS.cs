@@ -10,6 +10,7 @@ public class BoidECS : JobComponentSystem
     [Inject] private Enemy enemies;
     [Inject] private ComponentDataFromEntity<EnemyData> enemyData;
     [Inject] private ComponentDataFromEntity<Translation> position;
+    [Inject] private ComponentDataFromEntity<Rotation> rotation;
 
     [Inject] private Target targets;
 
@@ -20,6 +21,7 @@ public class BoidECS : JobComponentSystem
             deltaTime = Time.deltaTime,
             enemyData = enemyData,
             position = position,
+            rotation = rotation,
             targetsArray = targets.targets,
             enemiesArray = enemies.enemies
         }.Schedule(handle);
@@ -54,6 +56,7 @@ public class BoidECS : JobComponentSystem
         public float deltaTime;
         public ComponentDataFromEntity<EnemyData> enemyData;
         public ComponentDataFromEntity<Translation> position;
+        public ComponentDataFromEntity<Rotation> rotation;
         [ReadOnly] public EntityArray targetsArray;
         [ReadOnly] public EntityArray enemiesArray;
 
@@ -62,8 +65,6 @@ public class BoidECS : JobComponentSystem
 
         public void Execute()
         {
-            moveSpeed = enemyData[enemiesArray[0]].movementSpeed;
-            slowingDist = enemyData[enemiesArray[0]].slowingDistance;
             for (var i = 0; i < enemiesArray.Length; i++)
             for (var j = 0; j < targetsArray.Length; j++)
                 Arrive(i, j);
@@ -71,6 +72,8 @@ public class BoidECS : JobComponentSystem
 
         private void Arrive(int enemyIndex, int targetIndex)
         {
+            moveSpeed = enemyData[enemiesArray[enemyIndex]].movementSpeed;
+            slowingDist = enemyData[enemiesArray[enemyIndex]].slowingDistance;
             var dir = position[targetsArray[targetIndex]].Value - position[enemiesArray[enemyIndex]].Value;
 
             var distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
@@ -87,6 +90,11 @@ public class BoidECS : JobComponentSystem
                 var enemyPos = position[enemiesArray[enemyIndex]];
                 enemyPos.Value += desired * deltaTime;
                 position[enemiesArray[enemyIndex]] = enemyPos;
+                
+
+                var enemyRot = rotation[enemiesArray[enemyIndex]];
+                enemyRot.Value = Quaternion.LookRotation(desired);
+                rotation[enemiesArray[enemyIndex]] = enemyRot;
             }
         }
 
