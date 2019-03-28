@@ -9,7 +9,6 @@ public class TargetSpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, 
     [SerializeField] public TargetData targetData;
     [SerializeField] public TargetSpawnDataLocal targetSpawnDataLocal;
 
-
     public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
     {
         var spawnerData = new TargetSpawnData
