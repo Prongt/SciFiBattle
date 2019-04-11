@@ -22,7 +22,8 @@ public class Bootstrap : MonoBehaviour
 
     private void Start()
     {
-        entityManager = World.Active.GetOrCreateManager<EntityManager>();
+        entityManager = World.Active.EntityManager;
+        //entityManager = World.Active.GetOrCreateSystem<EntityManager>;
         entityCommandBuffer = new EntityCommandBuffer();
         CreateArchetypes(entityManager);
         CreateEntities(entityManager);

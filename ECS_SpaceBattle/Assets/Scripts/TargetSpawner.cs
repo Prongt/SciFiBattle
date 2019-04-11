@@ -9,7 +9,7 @@ public class TargetSpawner : JobComponentSystem
 
     protected override void OnCreateManager()
     {
-        entityCommandBuffer = World.Active.GetOrCreateManager<EndSimulationEntityCommandBufferSystem>();
+        entityCommandBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
     }
 
     protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -24,7 +24,7 @@ public class TargetSpawner : JobComponentSystem
         return job;
     }
 
-    private struct SpawnJob : IJobProcessComponentDataWithEntity<TargetSpawnData, LocalToWorld, TargetData>
+    private struct SpawnJob : IJobForEachWithEntity<TargetSpawnData, LocalToWorld, TargetData>
     {
         public EntityCommandBuffer CommandBuffer;
 

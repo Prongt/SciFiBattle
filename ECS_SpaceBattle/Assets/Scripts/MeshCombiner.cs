@@ -18,7 +18,10 @@ public class MeshCombiner : MonoBehaviour
         DestroyImmediate(child.gameObject);
 
         var path = "Assets/Meshes/" + meshesToCombine.name + ".asset";
-        AssetDatabase.CreateAsset(ship.GetComponent<MeshFilter>().sharedMesh, path);
+        Mesh mesh = ship.GetComponent<MeshFilter>().sharedMesh;
+        //mesh.SetTriangles(mesh.triangles, 0);
+        //mesh.Optimize();
+        AssetDatabase.CreateAsset(mesh, path);
     }
 
     private void CombineMeshes()

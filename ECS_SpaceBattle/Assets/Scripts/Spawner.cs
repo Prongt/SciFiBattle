@@ -10,7 +10,7 @@ public class Spawner : JobComponentSystem
     protected override void OnCreateManager()
     {
         //Creates the command buffer
-        entityCommandBuffer = World.Active.GetOrCreateManager<EndSimulationEntityCommandBufferSystem>();
+        entityCommandBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
     }
 
     //Calls the spawn job once on startup
@@ -27,7 +27,7 @@ public class Spawner : JobComponentSystem
     }
 
 
-    private struct SpawnJob : IJobProcessComponentDataWithEntity<EnemySpawnData, LocalToWorld, EnemyData>
+    private struct SpawnJob : IJobForEachWithEntity<EnemySpawnData, LocalToWorld, EnemyData>
     {
         public EntityCommandBuffer CommandBuffer;
 
@@ -44,7 +44,10 @@ public class Spawner : JobComponentSystem
                 CommandBuffer.SetComponent(instance, new Translation {Value = position});
 
                 CommandBuffer.AddComponent(instance, enemyData);
+
+                CommandBuffer.DestroyEntity(entity);
             }
+
             CommandBuffer.DestroyEntity(entity);
         }
     }

@@ -259,10 +259,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemySpawnData:
-    prefab: {fileID: 2990657889087188820, guid: 45e353423bf52924a8c2fd840f5160e8,
+    prefab: {fileID: 8854372390099596059, guid: 45e353423bf52924a8c2fd840f5160e8,
       type: 3}
-    countX: 50
-    countY: 50
+    countX: 150
+    countY: 150
   enemyData:
     movementSpeed: 3
     slowingDistance: 2
@@ -437,7 +437,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2102574582
 Transform:
   m_ObjectHideFlags: 0
