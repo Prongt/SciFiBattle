@@ -261,8 +261,8 @@ MonoBehaviour:
   enemySpawnData:
     prefab: {fileID: 8854372390099596059, guid: 45e353423bf52924a8c2fd840f5160e8,
       type: 3}
-    countX: 150
-    countY: 150
+    countX: 100
+    countY: 100
   enemyData:
     movementSpeed: 3
     slowingDistance: 2
@@ -565,7 +565,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110058480}
   m_LocalRotation: {x: 0.3107471, y: 0.4420527, z: -0.16654617, w: 0.82479584}
-  m_LocalPosition: {x: -56.986015, y: 100.12078, z: -25.187199}
+  m_LocalPosition: {x: -7.8381767, y: 8.191788, z: -4.605274}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

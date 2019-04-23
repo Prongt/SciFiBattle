@@ -6,7 +6,7 @@ using Unity.Transforms;
 public class Spawner : JobComponentSystem
 {
     public EndSimulationEntityCommandBufferSystem entityCommandBuffer;
-
+    public static int Count;
     protected override void OnCreateManager()
     {
         //Creates the command buffer
@@ -34,6 +34,7 @@ public class Spawner : JobComponentSystem
         public void Execute(Entity entity, int index, ref EnemySpawnData spawnData, ref LocalToWorld location,
             ref EnemyData enemyData)
         {
+            Count = spawnData.countX * spawnData.countY;
             for (var x = 0; x < spawnData.countX; x++)
             for (var y = 0; y < spawnData.countY; y++)
             {

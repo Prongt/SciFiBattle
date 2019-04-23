@@ -1,0 +1,39 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Boid
+
+
+struct data
+{
+	float3 pos;
+	/*float id;
+	float moveSpeed;
+	float slowingDist;
+	float timeDelta;*/
+	float3 d;
+	float3 targetPos;
+};
+
+
+RWStructuredBuffer<data> dataBuffer;
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+[numthreads(8,8,1)]
+void Boid (uint3 id : SV_DispatchThreadID)
+{
+
+	float3 dir = dataBuffer[id.x].targetPos - dataBuffer[id.x].pos;
+
+	float3 distance = sqrt(dir.x + dir.y + dir.z);
+
+
+	float3 ramped = dataBuffer[id.x].d.x * (distance / dataBuffer[id.x].d.y);
+	float3 clamped = min(ramped, dataBuffer[id.x].d.x);
+	float3 desired = clamped * (dir / distance);
+
+
+	dataBuffer[id.x].pos += desired * dataBuffer[id.x].d.z;
+
+    //Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}

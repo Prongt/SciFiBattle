@@ -8,6 +8,7 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
 {
     [SerializeField] public EnemySpawnDataLocal enemySpawnData;
     [SerializeField] public EnemyData enemyData;
+    public static EnemyData _enemyData;
 
     public void DeclareReferencedPrefabs(List<GameObject> gameObjects)
     {
@@ -16,6 +17,7 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
 
     public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
     {
+        _enemyData = enemyData;
         var spawnerData = new EnemySpawnData
         {
             prefab = conversionSystem.GetPrimaryEntity(enemySpawnData.prefab),
