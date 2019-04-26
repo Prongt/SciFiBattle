@@ -91,6 +91,13 @@ public class MeshCombiner : MonoBehaviour
         meshRendererCombine.materials = materialsArray;
 
         //foreach (var meshFilter in meshFilters) DestroyImmediate(meshFilter.gameObject);
+
+        foreach (Transform child in transform)
+        {
+            if (child != this)
+            Destroy(child.gameObject);
+        }
+
     }
 
     private int Contains(ArrayList searchList, string searchName)
