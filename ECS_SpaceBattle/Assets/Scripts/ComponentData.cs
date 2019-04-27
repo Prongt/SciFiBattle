@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
-
-
+using Unity.Physics;
+using Unity.Mathematics;
+using Unity.Collections;
+using Unity.Transforms;
+using Collider = Unity.Physics.Collider;
+using BoxCollider = Unity.Physics.BoxCollider;
 
 [Serializable]
 public struct TargetData : IComponentData
@@ -38,6 +42,11 @@ public struct EnemySpawnData : IComponentData
     public int countX;
     public int countY;
 }
+
+//public struct ColliderData : IComponentData
+//{
+//    public BoxCollider col;
+//}
 
 public struct TargetSpawnData : IComponentData
 {

@@ -34,12 +34,12 @@ public class Spawner : JobComponentSystem
     }
 
 
-    private struct SpawnJob : IJobForEachWithEntity<EnemySpawnData, LocalToWorld, EnemyData, PhysicsCollider>
+    private struct SpawnJob : IJobForEachWithEntity<EnemySpawnData, LocalToWorld, EnemyData>
     {
         public EntityCommandBuffer CommandBuffer;
 
         public void Execute(Entity entity, int index, ref EnemySpawnData spawnData, ref LocalToWorld location,
-            ref EnemyData enemyData, ref PhysicsCollider collider)
+            ref EnemyData enemyData)
         {
             Count = spawnData.countX * spawnData.countY;
             for (var x = 0; x < spawnData.countX; x++)
@@ -55,14 +55,17 @@ public class Spawner : JobComponentSystem
                     enemyData.inRange = false;
                     CommandBuffer.AddComponent(instance, enemyData);
 
+
+
+                    #region PhysicsStuffNotImplemented
+                    //CommandBuffer.AddComponent(instance, new PhysicsCollider());
                     //CommandBuffer.SetComponent(instance, new PhysicsCollider { Value = SpawnerBootstrap.sourceCollider });
 
-                    //CommandBuffer.AddComponent(instance, new PhysicsCollider());
-                    CommandBuffer.AddComponent(instance, collider);
+                    //CommandBuffer.AddComponent(instance, collider);
+                    #endregion
 
                     CommandBuffer.DestroyEntity(entity);
                 }
-
             CommandBuffer.DestroyEntity(entity);
         }
     }

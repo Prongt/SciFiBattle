@@ -70,8 +70,7 @@ public class Bootstrap : MonoBehaviour
             //typeof(Scale),
             typeof(Translation),
             typeof(RenderMesh),
-            typeof(TargetData),
-
+            typeof(TargetData)
         );
         enemyArchetype = entityManager.CreateArchetype(
             typeof(Rotation),

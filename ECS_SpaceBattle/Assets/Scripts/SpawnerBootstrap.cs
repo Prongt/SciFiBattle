@@ -52,6 +52,7 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
         };
         dstManager.AddComponentData(entity, eData);
 
+        #region PhysicsStuffNotImplemented
 
         //sourceCollider = dstManager.GetComponentData<PhysicsCollider>(entity).Value;
         //Entity sourceEntity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, World.Active);
@@ -69,26 +70,41 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
 
         //};
 
-        BoxCollider box = new BoxCollider
-        {
-            Center = new Vector3(0.0008711144f, -0.004504155f, -0.5448629f),
-            Size = new Vector3(0.4545653f, 0.09167009f, 0.5136013f),
-            ConvexRadius = 0.009167009f,
-            Filter = CollisionFilter.Default
-        };
+        //BoxCollider box = new BoxCollider
+        //{
+        //    Center = new Vector3(0.0008711144f, -0.004504155f, -0.5448629f),
+        //    Size = new Vector3(0.4545653f, 0.09167009f, 0.5136013f),
+        //    ConvexRadius = 0.009167009f,
+        //    Filter = CollisionFilter.Default
+        //};
 
         //var collider = new PhysicsCollider();
         //collider.Value = ;
 
-        BoxCollider col = new BoxCollider
-        {
-            Center = new Vector3(0.0008711144f, -0.004504155f, -0.5448629f),
-            Size = new Vector3(0.4545653f, 0.09167009f, 0.5136013f),
-            ConvexRadius = 0.009167009f,
-            Filter = CollisionFilter.Default
-        };
+        //BoxCollider col = new BoxCollider
+        //{
+        //    Center = new Vector3(0.0008711144f, -0.004504155f, -0.5448629f),
+        //    Size = new Vector3(0.4545653f, 0.09167009f, 0.5136013f),
+        //    ConvexRadius = 0.009167009f,
+        //    Filter = CollisionFilter.Default
+        //};
 
-        dstManager.AddComponent(entity, typeof(BoxCollider));
+
+        //var colData = new ColliderData
+        //{
+        //    col = col
+        //};
+
+        //dstManager.AddComponentData(entity, colData);
+
+        //var bc = new BlobAssetReference<BoxCollider>();
+        //bc.Value = col;
+
+
+        //dstManager.AddComponent(entity, bc);
+        //var pc = new PhysicsCollider { Value = new BlobAssetReference<Collider>().Value = c };
+
+        #endregion
     }
 
     [Serializable]

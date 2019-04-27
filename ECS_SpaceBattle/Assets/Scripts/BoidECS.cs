@@ -54,6 +54,13 @@ public class BoidECS : JobComponentSystem
                 rot.Value = Quaternion.LookRotation(enemyData.force);
                 enemyData.force = Vector3.zero;
             }
+            else
+            {
+                //Spawn projectiles every few seconds 
+                //Send projectiles towards target
+                //When in range create explosion effect and damage target
+
+            }
 
             //var temp = enemyData.force / enemyData.mass;
             //enemyData.acceleration = Vector3.Lerp(enemyData.acceleration, temp, deltaTime);
