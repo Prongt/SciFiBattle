@@ -30,13 +30,18 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
             movementSpeed = enemyData.movementSpeed,
             slowingDistance = enemyData.slowingDistance,
             minNeighbourDist = enemyData.minNeighbourDist,
+            attackRange = enemyData.attackRange,
+            fleeDistance = enemyData.fleeDistance,
+            maxSpeed = enemyData.maxSpeed,
             force = enemyData.force,
             acceleration = enemyData.acceleration,
             velocity = enemyData.velocity,
             mass = enemyData.mass,
             shouldDestroy = false,
             rotation = enemyData.rotation,
-            inRange = false
+            inRange = false,
+            fleeing = false
+
         };
         dstManager.AddComponentData(entity, eData);
     }

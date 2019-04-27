@@ -214,12 +214,16 @@ MonoBehaviour:
   enemySpawnData:
     prefab: {fileID: 8854372390099596059, guid: 45e353423bf52924a8c2fd840f5160e8,
       type: 3}
-    countX: 20
-    countY: 20
+    countX: 150
+    countY: 150
   enemyData:
-    movementSpeed: 0.1
+    movementSpeed: 1
     slowingDistance: 2
     minNeighbourDist: 0
+    attackRange: 20
+    fleeDistance: 10
+    maxSpeed: 0
+    damping: 0
     force:
       x: 0
       y: 0
@@ -235,6 +239,8 @@ MonoBehaviour:
     mass: 0
     rotation: {x: 0, y: 0, z: 0, w: 0}
     shouldDestroy: 0
+    inRange: 0
+    fleeing: 0
 --- !u!114 &687217795
 MonoBehaviour:
   m_ObjectHideFlags: 0

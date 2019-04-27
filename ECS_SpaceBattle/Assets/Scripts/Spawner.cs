@@ -44,7 +44,8 @@ public class Spawner : JobComponentSystem
                     new float3(x * 1.3F, noise.cnoise(new float2(x, y) * 0.21F) * 2, y * 1.3F));
 
                 CommandBuffer.SetComponent(instance, new Translation {Value = position});
- 
+
+                    enemyData.shouldDestroy = false;
                 CommandBuffer.AddComponent(instance, enemyData);
 
                 CommandBuffer.DestroyEntity(entity);
