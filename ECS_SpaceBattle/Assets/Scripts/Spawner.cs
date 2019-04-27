@@ -5,7 +5,7 @@ using Unity.Transforms;
 
 public class Spawner : JobComponentSystem
 {
-    public EndSimulationEntityCommandBufferSystem entityCommandBuffer;
+    public static EndSimulationEntityCommandBufferSystem entityCommandBuffer;
     public static int Count;
     protected override void OnCreateManager()
     {

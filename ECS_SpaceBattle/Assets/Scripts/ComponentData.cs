@@ -2,9 +2,14 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Transforms;
 
 
-    [Serializable]
+
+[Serializable]
     public struct TargetData : IComponentData
     {
         public float movementSpeed;
@@ -17,10 +22,12 @@ using UnityEngine;
         public float movementSpeed;
         public float slowingDistance;
         public float minNeighbourDist;
-        public Vector3 force;
-        public Vector3 acceleration;
-        public Vector3 velocity;
+        public float3 force;
+        public float3 acceleration;
+        public float3 velocity;
         public float mass;
+        public Quaternion rotation;
+        public bool shouldDestroy;
     }
 
     public struct EnemySpawnData : IComponentData
