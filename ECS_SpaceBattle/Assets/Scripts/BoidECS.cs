@@ -6,9 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 public class BoidECS : JobComponentSystem
-{
-    //public static NativeList<Entity> entitiesToDestroy = new NativeList<Entity>();
-    
+{   
     protected override JobHandle OnUpdate(JobHandle handle)
     {
         
@@ -18,13 +16,14 @@ public class BoidECS : JobComponentSystem
             targetPos = new Translation(),
             targetRot = new Rotation()
         }.Schedule(this, handle);
+        arriveJob.Complete();
 
         var boidJob =  new BoidJob()
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer()
         }.Schedule(this, arriveJob);
+
         boidJob.Complete();
-        //return boidJob.Complete;
 
         return new DestroyJob()
         {
@@ -39,10 +38,10 @@ public class BoidECS : JobComponentSystem
         [ReadOnly]public EntityCommandBuffer cmdBuffer;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
-            if (enemyData.shouldDestroy)
+            if (enemyData.shouldDestroy && entity != null)
             {
                 //World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().PostUpdateCommands.DestroyEntity(entity);
-                //cmdBuffer.DestroyEntity(entity);
+                cmdBuffer.DestroyEntity(entity);
             }
             trans.Value += enemyData.force;
             rot.Value = enemyData.rotation;

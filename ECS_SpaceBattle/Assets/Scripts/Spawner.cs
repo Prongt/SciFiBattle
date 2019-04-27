@@ -20,6 +20,7 @@ public class Spawner : JobComponentSystem
         {
             CommandBuffer = entityCommandBuffer.CreateCommandBuffer()
         }.ScheduleSingle(this, inputDeps);
+        job.Complete();
 
         entityCommandBuffer.AddJobHandleForProducer(job);
 
@@ -44,6 +45,7 @@ public class Spawner : JobComponentSystem
 
                 CommandBuffer.SetComponent(instance, new Translation {Value = position});
 
+                    enemyData.shouldDestroy = false;
                 CommandBuffer.AddComponent(instance, enemyData);
 
                 CommandBuffer.DestroyEntity(entity);
