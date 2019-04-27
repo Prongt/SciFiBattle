@@ -46,6 +46,7 @@ public class Spawner : JobComponentSystem
                 CommandBuffer.SetComponent(instance, new Translation {Value = position});
 
                     enemyData.shouldDestroy = false;
+                    enemyData.inRange = false;
                 CommandBuffer.AddComponent(instance, enemyData);
 
                 CommandBuffer.DestroyEntity(entity);

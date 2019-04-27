@@ -48,9 +48,12 @@ public class BoidECS : JobComponentSystem
         public float deltaTime;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
-
-            trans.Value += enemyData.force;
-            rot.Value = Quaternion.LookRotation(enemyData.force);
+            if (!enemyData.inRange)
+            {
+                trans.Value += enemyData.force;
+                rot.Value = Quaternion.LookRotation(enemyData.force);
+                enemyData.force = Vector3.zero;
+            }
 
             //var temp = enemyData.force / enemyData.mass;
             //enemyData.acceleration = Vector3.Lerp(enemyData.acceleration, temp, deltaTime);
@@ -64,7 +67,7 @@ public class BoidECS : JobComponentSystem
             //    enemyData.velocity *= (1.0f - (enemyData.damping * deltaTime));
             //}
 
-            enemyData.force = Vector3.zero;
+            
 
             if (enemyData.shouldDestroy && entity != null)
             {
