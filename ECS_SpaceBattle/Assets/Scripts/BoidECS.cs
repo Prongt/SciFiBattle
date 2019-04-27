@@ -35,7 +35,7 @@ public class BoidECS : JobComponentSystem
         var destroyJob = new DestroyJob()
         {
             //cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer()
-        }.Schedule(this,boidJob);
+        }.Schedule(this, boidJob);
         destroyJob.Complete();
 
         return destroyJob;
@@ -48,28 +48,28 @@ public class BoidECS : JobComponentSystem
         public float deltaTime;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
-                
-                trans.Value += enemyData.force;
-                rot.Value = Quaternion.LookRotation(enemyData.force);
 
-                //var temp = enemyData.force / enemyData.mass;
-                //enemyData.acceleration = Vector3.Lerp(enemyData.acceleration, temp, deltaTime);
-                //enemyData.velocity += enemyData.acceleration * deltaTime;
+            trans.Value += enemyData.force;
+            rot.Value = Quaternion.LookRotation(enemyData.force);
 
-                //enemyData.velocity = Vector3.ClampMagnitude(enemyData.velocity, enemyData.maxSpeed);
-                //var speed = ((Vector3)enemyData.velocity).magnitude;
+            //var temp = enemyData.force / enemyData.mass;
+            //enemyData.acceleration = Vector3.Lerp(enemyData.acceleration, temp, deltaTime);
+            //enemyData.velocity += enemyData.acceleration * deltaTime;
 
-                //if (speed > 0)
-                //{
-                //    enemyData.velocity *= (1.0f - (enemyData.damping * deltaTime));
-                //}
+            //enemyData.velocity = Vector3.ClampMagnitude(enemyData.velocity, enemyData.maxSpeed);
+            //var speed = ((Vector3)enemyData.velocity).magnitude;
 
-                enemyData.force = Vector3.zero;
+            //if (speed > 0)
+            //{
+            //    enemyData.velocity *= (1.0f - (enemyData.damping * deltaTime));
+            //}
 
-                if (enemyData.shouldDestroy && entity != null)
-                {
-                    cmdBuffer.DestroyEntity(entity);
-                }
+            enemyData.force = Vector3.zero;
+
+            if (enemyData.shouldDestroy && entity != null)
+            {
+                cmdBuffer.DestroyEntity(entity);
+            }
         }
     }
 
@@ -81,25 +81,25 @@ public class BoidECS : JobComponentSystem
         public Rotation targetRot;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
-                var moveSpeed = enemyData.movementSpeed;
-                var slowingDist = enemyData.slowingDistance;
-                var dir = targetPos.Value - trans.Value;
-                var distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
+            var moveSpeed = enemyData.movementSpeed;
+            var slowingDist = enemyData.slowingDistance;
+            var dir = targetPos.Value - trans.Value;
+            var distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
 
-                if (distance <= 5)
-                {
-                    //enemyData.inRange = true;
-                    enemyData.shouldDestroy = true;               
-                    //In Range of target
-                }
-                else
-                {
-                    var ramped = moveSpeed * (distance / slowingDist);
-                    var clamped = Mathf.Min(ramped, moveSpeed);
-                    var desired = clamped * (dir / distance);
+            if (distance <= enemyData.attackRange)
+            {
+                enemyData.inRange = true;
+                //enemyData.shouldDestroy = true;               
+                //In Range of target
+            }
+            else
+            {
+                var ramped = moveSpeed * (distance / slowingDist);
+                var clamped = Mathf.Min(ramped, moveSpeed);
+                var desired = clamped * (dir / distance);
 
-                    enemyData.force += desired * deltaTime;
-                }
+                enemyData.force += desired * deltaTime;
+            }
         }
     }
 
@@ -110,19 +110,20 @@ public class BoidECS : JobComponentSystem
         public Rotation targetRot;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
-            
-            //var desired = targetPos.Value - trans.Value;
-            //if (((Vector3)desired).magnitude <= enemyData.fleeDistance)
-            //{
-            //    ((Vector3)desired).Normalize();
-            //    desired *= enemyData.maxSpeed;
-            //    enemyData.force += enemyData.velocity - desired;
-            //    enemyData.fleeing = true;
-            //}
-            //else
-            //{
-            //    enemyData.fleeing = false;
-            //}
+            return;
+
+            var desired = targetPos.Value - trans.Value;
+            if (((Vector3)desired).magnitude <= enemyData.fleeDistance)
+            {
+                ((Vector3)desired).Normalize();
+                desired *= enemyData.maxSpeed;
+                enemyData.force += enemyData.velocity - desired;
+                enemyData.fleeing = true;
+            }
+            else
+            {
+                enemyData.fleeing = false;
+            }
         }
     }
 
