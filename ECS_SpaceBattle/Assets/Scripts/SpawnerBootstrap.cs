@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using System;
 
 public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 {
@@ -34,7 +33,10 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
             force = enemyData.force,
             acceleration = enemyData.acceleration,
             velocity = enemyData.velocity,
-            mass = enemyData.mass
+            mass = enemyData.mass,
+            shouldDestroy = false,
+            rotation = enemyData.rotation,
+            inRange = false
         };
         dstManager.AddComponentData(entity, eData);
     }

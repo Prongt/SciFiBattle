@@ -6,19 +6,20 @@ using Unity.Transforms;
 using UnityEngine;
 
 public class BoidECS : JobComponentSystem
-{   
+{
     protected override JobHandle OnUpdate(JobHandle handle)
     {
-        
+
         var arriveJob = new ArriveJob
         {
             deltaTime = Time.deltaTime,
             targetPos = new Translation(),
             targetRot = new Rotation()
         }.Schedule(this, handle);
+
         arriveJob.Complete();
 
-        var boidJob =  new BoidJob()
+        var boidJob = new BoidJob()
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer()
         }.Schedule(this, arriveJob);
@@ -27,26 +28,24 @@ public class BoidECS : JobComponentSystem
 
         return new DestroyJob()
         {
-            //cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>(),
-            //entitysToDestroy = entitiesToDestroy
         }.Schedule(boidJob);
     }
 
     [BurstCompile]
     private struct BoidJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
     {
-        [ReadOnly]public EntityCommandBuffer cmdBuffer;
+        [ReadOnly] public EntityCommandBuffer cmdBuffer;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
             if (enemyData.shouldDestroy && entity != null)
             {
-                //World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().PostUpdateCommands.DestroyEntity(entity);
                 cmdBuffer.DestroyEntity(entity);
             }
             trans.Value += enemyData.force;
-            rot.Value = enemyData.rotation;
+            rot.Value = Quaternion.LookRotation(enemyData.force);
 
             enemyData.force = Vector3.zero;
+            //enemyData.rotation = Quaternion.identity;
         }
     }
 
@@ -65,7 +64,7 @@ public class BoidECS : JobComponentSystem
 
             if (distance < 2f)
             {
-                enemyData.shouldDestroy = true;
+                //enemyData.shouldDestroy = true;
                 //In Range of target
             }
             else
@@ -73,11 +72,8 @@ public class BoidECS : JobComponentSystem
                 var ramped = moveSpeed * (distance / slowingDist);
                 var clamped = Mathf.Min(ramped, moveSpeed);
                 var desired = clamped * (dir / distance);
-                //trans.Value += desired * deltaTime;
-                //rot.Value = Quaternion.LookRotation(desired);
 
                 enemyData.force += desired * deltaTime;
-                enemyData.rotation = enemyData.rotation * Quaternion.LookRotation(desired);
             }
         }
     }
