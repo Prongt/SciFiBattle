@@ -8,6 +8,7 @@
     "com.unity.entities": "0.0.12-preview.30",
     "com.unity.jobs": "0.0.7-preview.10",
     "com.unity.package-manager-ui": "2.1.2",
+    "com.unity.physics": "0.0.2-preview.1",
     "com.unity.purchasing": "2.0.6",
     "com.unity.render-pipelines.core": "5.7.2",
     "com.unity.render-pipelines.lightweight": "5.7.2",
