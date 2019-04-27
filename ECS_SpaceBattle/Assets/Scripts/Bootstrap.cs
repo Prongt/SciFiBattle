@@ -1,9 +1,15 @@
-﻿using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Rendering;
-using Unity.Transforms;
+﻿using System;
+using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
+using Unity.Physics;
+using Unity.Mathematics;
+using Unity.Collections;
+using Unity.Transforms;
+using Collider = Unity.Physics.Collider;
+using BoxCollider = Unity.Physics.BoxCollider;
 using Random = UnityEngine.Random;
+using Unity.Rendering;
 
 public class Bootstrap : MonoBehaviour
 {
@@ -35,6 +41,9 @@ public class Bootstrap : MonoBehaviour
         var target = entityManager.CreateEntity(targetArchetype);
         entityManager.SetComponentData(target, new Translation {Value = targetStartPos});
         entityManager.SetComponentData(target, new Rotation {Value = quaternion.identity});
+
+
+
         //entityManager.SetComponentData(target, new Scale() { Value = new float3(6.0f, 6.0f, 6.0f) });
         entityManager.SetSharedComponentData(target, targetMesh);
 
@@ -61,7 +70,8 @@ public class Bootstrap : MonoBehaviour
             //typeof(Scale),
             typeof(Translation),
             typeof(RenderMesh),
-            typeof(TargetData)
+            typeof(TargetData),
+
         );
         enemyArchetype = entityManager.CreateArchetype(
             typeof(Rotation),

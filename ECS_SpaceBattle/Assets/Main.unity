@@ -214,8 +214,8 @@ MonoBehaviour:
   enemySpawnData:
     prefab: {fileID: 8276224298041672086, guid: 8989a7dde0860144a9aa06594152d158,
       type: 3}
-    countX: 150
-    countY: 150
+    countX: 50
+    countY: 50
   enemyData:
     movementSpeed: 1
     slowingDistance: 2
