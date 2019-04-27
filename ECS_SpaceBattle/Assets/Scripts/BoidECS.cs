@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
+using Unity.Rendering;
 
 public class BoidECS : JobComponentSystem
 {
@@ -27,8 +28,15 @@ public class BoidECS : JobComponentSystem
         var boidJob = new BoidJob()
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
-            deltaTime = Time.deltaTime
-        }.Schedule(this, fleeJob);
+            deltaTime = Time.deltaTime,
+            //projectileArchtype = World.Active.EntityManager.CreateArchetype(
+            //typeof(Rotation),
+            //typeof(Translation),
+            //typeof(RenderMesh),
+            //typeof(ProjectileData)
+            //),
+            //renderMesh = ComponentData.renderMesh
+    }.Schedule(this, fleeJob);
 
         boidJob.Complete();
 
@@ -44,8 +52,12 @@ public class BoidECS : JobComponentSystem
     [BurstCompile]
     private struct BoidJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
     {
+        //public EntityArchetype projectileArchtype;
+        //public RenderMesh renderMesh;
         [ReadOnly] public EntityCommandBuffer cmdBuffer;
         public float deltaTime;
+
+        //public Unity.Mathematics.Random random;
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
             if (!enemyData.inRange)
@@ -60,6 +72,25 @@ public class BoidECS : JobComponentSystem
                 //Send projectiles towards target
                 //When in range create explosion effect and damage target
 
+                //ProjectileSpawner.projectilesList.Add(new ProjectileData
+                //{
+                //    speed = 1.0f,
+                //    startingPos = trans.Value,
+                //    target = new Translation().Value
+                //});
+
+                //var bullet = cmdBuffer.CreateEntity(projectileArchtype);
+                //cmdBuffer.SetComponent(entity, new Translation { Value = trans.Value });
+                //cmdBuffer.SetComponent(entity, new Rotation { Value = rot.Value });
+                //cmdBuffer.AddComponent(entity, new ProjectileData
+                //{
+                //    speed = 1.0f,
+                //    //startingPos = data[i].startingPos,
+                //    target = new Translation().Value
+                //});
+                
+                //cmdBuffer.AddSharedComponent(entity, renderMesh);
+                ComponentData.Spawn(trans.Value, rot.Value);
             }
 
             //var temp = enemyData.force / enemyData.mass;

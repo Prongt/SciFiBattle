@@ -8,6 +8,9 @@ using Unity.Collections;
 using Unity.Transforms;
 using Collider = Unity.Physics.Collider;
 using BoxCollider = Unity.Physics.BoxCollider;
+using Unity.Rendering;
+using Mesh = UnityEngine.Mesh;
+using Material = UnityEngine.Material;
 
 [Serializable]
 public struct TargetData : IComponentData
@@ -52,5 +55,60 @@ public struct TargetSpawnData : IComponentData
 {
     public Entity prefab;
     public float3 spawnPos;
+}
+
+public struct ProjectileData : IComponentData
+{
+    public float speed;
+    public Vector3 target;
+    //public Vector3 startingPos;
+}
+
+[Serializable]
+public struct ProjectileSpawnData : IComponentData
+{
+    public RenderMesh mesh;
+}
+
+public class ComponentData : MonoBehaviour
+{
+    public static EntityArchetype projectileArchtype;
+    public static ProjectileSpawnData projectileSpawnData;
+    [SerializeField] public ProjectileSpawnData spawnData;
+    public RenderMesh mesh;
+    public static RenderMesh renderMesh;
+
+    //public static List<ProjectileData> projectiles;
+    private void Awake()
+    {
+        renderMesh = mesh;
+        //projectiles = new List<ProjectileData>();
+
+        projectileSpawnData = spawnData;
+        projectileArchtype = World.Active.EntityManager.CreateArchetype(
+            typeof(Rotation),
+            typeof(Translation),
+            typeof(RenderMesh),
+            typeof(ProjectileData)
+            );
+
+        cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+
+    }
+    public static EntityCommandBuffer cmdBuffer;
+    public static void Spawn(float3 pos, Quaternion rot)
+    {
+        var bullet = cmdBuffer.CreateEntity(projectileArchtype);
+        cmdBuffer.SetComponent(bullet, new Translation { Value = pos });
+        cmdBuffer.SetComponent(bullet, new Rotation { Value = rot });
+        cmdBuffer.AddComponent(bullet, new ProjectileData
+        {
+            speed = 1.0f,
+            //startingPos = data[i].startingPos,
+            target = new Translation().Value
+        });
+
+        cmdBuffer.AddSharedComponent(bullet, renderMesh);
+    }
 }
 
