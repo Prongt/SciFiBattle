@@ -14,15 +14,15 @@ public class BoidECS : JobComponentSystem
     public NativeHashMap<int, ProjectileData> projectileHashMap;
 
     public int maxNeighbours = 10;
-    public NativeArray<Vector3> boidPositions;
+    public NativeHashMap<int, Vector3> boidPositions;
     public NativeMultiHashMap<int, Vector3> boidNeighbours;
 
     protected override void OnCreateManager()
     {
         projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
 
-        boidPositions = new NativeArray<Vector3>(5000, Allocator.Persistent);
-        boidNeighbours = new NativeMultiHashMap<int, Vector3>(5000 * maxNeighbours, Allocator.Persistent);
+        boidPositions = new NativeHashMap<int, Vector3>(2500, Allocator.Persistent);
+        boidNeighbours = new NativeMultiHashMap<int, Vector3>(2500 * maxNeighbours, Allocator.Persistent);
 
         Debug.Log("On Create!");
     }
@@ -38,12 +38,17 @@ public class BoidECS : JobComponentSystem
 
     protected override JobHandle OnUpdate(JobHandle handle)
     {
+        var updatePosJob = new UpdatePostitionsJob
+        {
+            positions = boidPositions
+        }.Schedule(this, handle);
+        updatePosJob.Complete();
         var neighbourJob = new NeighbourJob
         {
             positions = boidPositions,
             hashMap = boidNeighbours,
             maxNeighbours = maxNeighbours
-        }.Schedule(this,handle);
+        }.Schedule(this,updatePosJob);
         neighbourJob.Complete();
 
         var arriveJob = new ArriveJob
@@ -247,10 +252,22 @@ public class BoidECS : JobComponentSystem
     }
 
     [BurstCompile]
+    private struct UpdatePostitionsJob : IJobForEachWithEntity<EnemyData, Translation>
+    {
+        [NativeDisableParallelForRestriction]
+        public NativeHashMap<int, Vector3> positions;
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans)
+        {
+            //positions[data.index] = trans.Value;
+            positions.TryAdd(data.index, trans.Value);
+        }
+    }
+
+    [BurstCompile]
     private struct NeighbourJob : IJobForEachWithEntity<EnemyData, Translation>
     {
-        //[NativeDisableParallelForRestriction]
-        public NativeArray<Vector3> positions;
+        [NativeDisableParallelForRestriction]
+        public NativeHashMap<int, Vector3> positions;
 
         [NativeDisableParallelForRestriction]
         public NativeMultiHashMap<int, Vector3> hashMap;
@@ -258,8 +275,6 @@ public class BoidECS : JobComponentSystem
         public int maxNeighbours;
         public void Execute(Entity entity, int jobIndex, ref EnemyData data, ref Translation trans)
         {
-          
-            positions[data.index] = trans.Value;
             var maxDist = data.maxNeighbourDist;
             var neighbourCount = 0;
             var boidPos = trans.Value;
@@ -270,9 +285,11 @@ public class BoidECS : JobComponentSystem
             {
                 do
                 {
+                    //Debug.Log("Success");
                     if (Vector3.Distance(boidPos, neighbourPos) < maxDist)
                     {
                         neighbourCount++;
+                        
                     }
                     else
                     {
@@ -281,20 +298,60 @@ public class BoidECS : JobComponentSystem
                 } while (hashMap.TryGetNextValue(out neighbourPos, ref it));
             }
 
-            while (neighbourCount > maxNeighbours)
+
+            //while (neighbourCount < maxNeighbours)
+            //{
+            //    for (int i = 0; i < positions.Length; i++)
+            //    {
+            //        if (positions[i] != null && i != index)
+            //        {
+            //            if (Vector3.Distance(boidPos, positions[i]) < maxDist)
+            //            {
+            //                neighbourCount++;
+            //                //hashMap.Add(index, positions[i]);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //for (int i = 0; i < positions.Length; i++)
+            //{
+            //    if (positions[i] != null && positions[i] != (Vector3)trans.Value && neighbourCount < maxNeighbours)
+            //    {
+            //        if (Vector3.Distance(boidPos, positions[i]) < maxDist)
+            //        {
+            //            neighbourCount++;
+            //            //hashMap.Add(index, positions[i]);
+            //        }
+            //    }
+
+
+            //}
+            Vector3 v;
+
+            for (int i = 0; i < positions.Length; i++)
             {
-                for (int i = 0; i < positions.Length; i++)
+                if (neighbourCount > maxNeighbours)
                 {
-                    if (positions[i] != null && i != index)
+                    break;
+                }
+
+                if (positions.TryGetValue(i, out v))
+                {
+                    if (Vector3.Distance(boidPos, v) < maxDist)
                     {
-                        if (Vector3.Distance(boidPos, positions[i]) < maxDist)
-                        {
-                            neighbourCount++;
-                            hashMap.Add(index, positions[i]);
-                        }
+                        neighbourCount++;
+                        //hashMap.Add(index, v);
+
                     }
                 }
+                
+                
             }
+            
+                
+
+            //positions.Clear();
         }
     }
 

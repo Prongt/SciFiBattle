@@ -219,7 +219,7 @@ MonoBehaviour:
   enemyData:
     movementSpeed: 1
     slowingDistance: 2
-    minNeighbourDist: 0
+    maxNeighbourDist: 10
     attackRange: 5
     fleeDistance: 2
     maxSpeed: 0
@@ -241,6 +241,7 @@ MonoBehaviour:
     shouldDestroy: 0
     inRange: 0
     fleeing: 0
+    index: 0
 --- !u!114 &687217795
 MonoBehaviour:
   m_ObjectHideFlags: 0
