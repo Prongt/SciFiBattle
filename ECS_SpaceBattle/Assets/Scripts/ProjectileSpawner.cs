@@ -79,32 +79,3 @@ public class ProjectileSpawner : MonoBehaviour, IDeclareReferencedPrefabs, IConv
     }
 }
 
-//public struct ProjectileSpawnJob : IJob
-//{
-//    [ReadOnly] public EntityCommandBuffer CommandBuffer;
-//    //[ReadOnly] public NativeList<ProjectileData> projectilesLocal;
-//    public NativeArray<ProjectileData> data;
-//    public void Execute()
-//    {
-//        for (int i = 0; i < data.Length; i++)
-//        {
-//            var entity = CommandBuffer.CreateEntity(ComponentData.projectileArchtype);
-//            CommandBuffer.SetComponent(entity, new Translation { Value = data[i].startingPos });
-//            CommandBuffer.SetComponent(entity, new Rotation { Value = quaternion.identity });
-//            CommandBuffer.SetComponent(entity, new ProjectileData
-//            {
-//                speed = data[i].speed,
-//                startingPos = data[i].startingPos,
-//                target = data[i].target
-//            });
-
-//            if (i == 0)
-//            {
-//                CommandBuffer.AddSharedComponent(entity, ComponentData.projectileSpawnData.mesh);
-//            }
-
-//        }
-
-//        //ComponentData.projectiles.Clear();
-//    }
-//}

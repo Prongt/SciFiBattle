@@ -10,13 +10,13 @@ using Unity.Mathematics;
 public class BoidECS : JobComponentSystem
 {
     public static Vector3 targetPos;
-    //public static Entity projectileEntity;
-    public NativeHashMap<Vector3, ProjectileData> projectileHashMap;
-    //public static Rotation 
+
+    public NativeHashMap<int, ProjectileData> projectileHashMap;
+ 
 
     protected override void OnCreateManager()
     {
-        projectileHashMap = new NativeHashMap<Vector3, ProjectileData>(1000, Allocator.Persistent);
+        projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
         Debug.Log("On Create!");
     }
 
@@ -48,18 +48,18 @@ public class BoidECS : JobComponentSystem
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
             deltaTime = Time.deltaTime,
-            targetPos = new Translation() { Value = targetPos },
-            hashMap = projectileHashMap
+            targetPos = new Translation() { Value = targetPos }
+            //hashMap = projectileHashMap
         }.Schedule(this, fleeJob);
         boidJob.Complete();
 
 
-        var projectileJob = new ProjectileSpawnJob
-        {
-            cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
-            hashMap = projectileHashMap
-        }.Schedule(this, boidJob);
-        projectileJob.Complete();
+        //var projectileJob = new ProjectileSpawnJob
+        //{
+        //    cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
+        //    hashMap = projectileHashMap
+        //}.Schedule(this, boidJob);
+        //projectileJob.Complete();
 
         var destroyJob = new DestroyJob()
         {
@@ -75,10 +75,9 @@ public class BoidECS : JobComponentSystem
         [ReadOnly] public EntityCommandBuffer cmdBuffer;
         public float deltaTime;
         public Translation targetPos;
-        //public Entity projectileToSpawn;
 
-        [NativeDisableParallelForRestriction]
-        public NativeHashMap<Vector3, ProjectileData> hashMap;
+        //[NativeDisableParallelForRestriction]
+        //public NativeHashMap<int, ProjectileData> hashMap;
 
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
@@ -91,11 +90,12 @@ public class BoidECS : JobComponentSystem
             }
             else
             {
-                hashMap.TryAdd(trans.Value, new ProjectileData
-                {
-                    speed = 2.0f,
-                    target = targetPos.Value
-                });
+                //hashMap.TryAdd(hashMap.Length , new ProjectileData
+                //{
+                //    speed = 2.0f,
+                //    target = enemyData.force,
+                //    startingPos = trans.Value
+                //});
 
                 #region old
                 //Spawn projectiles every few seconds 
@@ -214,39 +214,31 @@ public class BoidECS : JobComponentSystem
         }
     }
 
+    //[BurstCompile]
     private struct ProjectileSpawnJob : IJobForEachWithEntity<ProjectileSpawnData, LocalToWorld, ProjectileData>
     {
         [ReadOnly] public EntityCommandBuffer cmdBuffer;
 
         [NativeDisableParallelForRestriction]
-        public NativeHashMap<Vector3, ProjectileData> hashMap;
+        public NativeHashMap<int, ProjectileData> hashMap;
         public void Execute(Entity entity, int index, ref ProjectileSpawnData projectileSpawnData, ref LocalToWorld location, ref ProjectileData projectileData)
         {
-            var keyArray = hashMap.GetKeyArray(Allocator.Temp);
-
-            for (int i = 0; i < keyArray.Length; i++)
+            for (int i = 0; i < hashMap.Length; i++)
             {
+                if (i >= hashMap.Length)
+                {
+                    continue;
+                }
                 var instance = cmdBuffer.Instantiate(projectileSpawnData.prefab);
-                var position = keyArray[i];
+                var data = hashMap[i];
 
-                cmdBuffer.SetComponent(instance, new Translation { Value = position });
+                var pos = math.transform(location.Value, data.startingPos);
+                cmdBuffer.SetComponent(instance, new Translation { Value = pos });
 
-                cmdBuffer.AddComponent(instance, hashMap[position]);
-                hashMap.Remove(keyArray[i]);
+                cmdBuffer.AddComponent(instance, data);
             }
-            //hashMap.Dispose();
+            hashMap.Clear();
 
-            //for (int i = 0; i < projectileHashMap.Length; i++)
-            //{
-            //    var instance = cmdBuffer.Instantiate(projectileSpawnData.prefab);
-            //    var position = projectileHashMap.
-
-            //    cmdBuffer.SetComponent(instance, new Translation { Value = position });
-
-            //    enemyData.shouldDestroy = false;
-            //    enemyData.inRange = false;
-            //    cmdBuffer.AddComponent(instance, enemyData);
-            //}
 
         }
     }

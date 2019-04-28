@@ -61,7 +61,7 @@ public struct ProjectileData : IComponentData
 {
     public float speed;
     public Vector3 target;
-    //public Vector3 startingPos;
+    public Vector3 startingPos;
 }
 
 [Serializable]
@@ -89,20 +89,17 @@ public class ComponentData : MonoBehaviour
     private void Awake()
     {
         BoidECS.targetPos = target.transform.position;
-        //BoidECS.projectileHashMap = new NativeHashMap<Vector3, ProjectileData>();
 
-        renderMesh = mesh;
-        //projectiles = new List<ProjectileData>();
+        //renderMesh = mesh;
+        //projectileSpawnData = spawnData;
+        //projectileArchtype = World.Active.EntityManager.CreateArchetype(
+        //    typeof(Rotation),
+        //    typeof(Translation),
+        //    typeof(RenderMesh),
+        //    typeof(ProjectileData)
+        //    );
 
-        projectileSpawnData = spawnData;
-        projectileArchtype = World.Active.EntityManager.CreateArchetype(
-            typeof(Rotation),
-            typeof(Translation),
-            typeof(RenderMesh),
-            typeof(ProjectileData)
-            );
-
-        cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+        //cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
 
     }
     public static EntityCommandBuffer cmdBuffer;
