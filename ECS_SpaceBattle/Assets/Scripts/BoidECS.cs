@@ -12,11 +12,18 @@ public class BoidECS : JobComponentSystem
     public static Vector3 targetPos;
 
     public NativeHashMap<int, ProjectileData> projectileHashMap;
- 
+
+    public int maxNeighbours = 10;
+    public NativeArray<Vector3> boidPositions;
+    public NativeMultiHashMap<int, Vector3> boidNeighbours;
 
     protected override void OnCreateManager()
     {
         projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
+
+        boidPositions = new NativeArray<Vector3>(5000, Allocator.Persistent);
+        boidNeighbours = new NativeMultiHashMap<int, Vector3>(5000 * maxNeighbours, Allocator.Persistent);
+
         Debug.Log("On Create!");
     }
 
@@ -24,17 +31,27 @@ public class BoidECS : JobComponentSystem
     {
         base.OnDestroyManager();
         projectileHashMap.Dispose();
+        boidPositions.Dispose();
+        boidNeighbours.Dispose();
         Debug.Log("on destroy");
     }
 
     protected override JobHandle OnUpdate(JobHandle handle)
     {
+        var neighbourJob = new NeighbourJob
+        {
+            positions = boidPositions,
+            hashMap = boidNeighbours,
+            maxNeighbours = maxNeighbours
+        }.Schedule(this,handle);
+        neighbourJob.Complete();
+
         var arriveJob = new ArriveJob
         {
             deltaTime = Time.deltaTime,
             targetPos = new Translation() { Value = targetPos},
             targetRot = new Rotation()
-        }.Schedule(this, handle);
+        }.Schedule(this, neighbourJob);
         arriveJob.Complete();
 
         var fleeJob = new FleeJob
@@ -48,8 +65,8 @@ public class BoidECS : JobComponentSystem
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
             deltaTime = Time.deltaTime,
-            targetPos = new Translation() { Value = targetPos }
-            //hashMap = projectileHashMap
+            targetPos = new Translation() { Value = targetPos },
+            hashMap = boidNeighbours
         }.Schedule(this, fleeJob);
         boidJob.Complete();
 
@@ -79,9 +96,24 @@ public class BoidECS : JobComponentSystem
         //[NativeDisableParallelForRestriction]
         //public NativeHashMap<int, ProjectileData> hashMap;
 
+        [NativeDisableParallelForRestriction]
+        public NativeMultiHashMap<int, Vector3> hashMap;
+
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
-            //hashMap.Dispose();
+            //NativeMultiHashMapIterator<int> it;
+            //if (hashMap.TryGetFirstValue(2310, out Vector3 neighbourPos, out it))
+            //{
+            //    do
+            //    {
+            //        Debug.Log("Yes");
+            //    } while (hashMap.TryGetNextValue(out neighbourPos, ref it));
+            //}
+            //else
+            //{
+            //    Debug.Log("Erasdasror");
+            //}
+
             if (!enemyData.inRange)
             {
                 trans.Value += enemyData.force;
@@ -214,7 +246,58 @@ public class BoidECS : JobComponentSystem
         }
     }
 
-    //[BurstCompile]
+    [BurstCompile]
+    private struct NeighbourJob : IJobForEachWithEntity<EnemyData, Translation>
+    {
+        //[NativeDisableParallelForRestriction]
+        public NativeArray<Vector3> positions;
+
+        [NativeDisableParallelForRestriction]
+        public NativeMultiHashMap<int, Vector3> hashMap;
+
+        public int maxNeighbours;
+        public void Execute(Entity entity, int jobIndex, ref EnemyData data, ref Translation trans)
+        {
+          
+            positions[data.index] = trans.Value;
+            var maxDist = data.maxNeighbourDist;
+            var neighbourCount = 0;
+            var boidPos = trans.Value;
+            NativeMultiHashMapIterator<int> it;
+            var index = data.index;
+
+            if (hashMap.TryGetFirstValue(index, out Vector3 neighbourPos, out it))
+            {
+                do
+                {
+                    if (Vector3.Distance(boidPos, neighbourPos) < maxDist)
+                    {
+                        neighbourCount++;
+                    }
+                    else
+                    {
+                        hashMap.TryRemove(index, neighbourPos);
+                    }
+                } while (hashMap.TryGetNextValue(out neighbourPos, ref it));
+            }
+
+            while (neighbourCount > maxNeighbours)
+            {
+                for (int i = 0; i < positions.Length; i++)
+                {
+                    if (positions[i] != null && i != index)
+                    {
+                        if (Vector3.Distance(boidPos, positions[i]) < maxDist)
+                        {
+                            neighbourCount++;
+                            hashMap.Add(index, positions[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private struct ProjectileSpawnJob : IJobForEachWithEntity<ProjectileSpawnData, LocalToWorld, ProjectileData>
     {
         [ReadOnly] public EntityCommandBuffer cmdBuffer;

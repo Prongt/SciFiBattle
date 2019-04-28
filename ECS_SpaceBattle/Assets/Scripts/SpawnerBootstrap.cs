@@ -36,7 +36,7 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
         {
             movementSpeed = enemyData.movementSpeed,
             slowingDistance = enemyData.slowingDistance,
-            minNeighbourDist = enemyData.minNeighbourDist,
+            maxNeighbourDist = enemyData.maxNeighbourDist,
             attackRange = enemyData.attackRange,
             fleeDistance = enemyData.fleeDistance,
             maxSpeed = enemyData.maxSpeed,

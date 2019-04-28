@@ -42,6 +42,7 @@ public class Spawner : JobComponentSystem
             ref EnemyData enemyData)
         {
             Count = spawnData.countX * spawnData.countY;
+            var i = 0;
             for (var x = 0; x < spawnData.countX; x++)
                 for (var y = 0; y < spawnData.countY; y++)
                 {
@@ -53,6 +54,8 @@ public class Spawner : JobComponentSystem
 
                     enemyData.shouldDestroy = false;
                     enemyData.inRange = false;
+                    enemyData.index = i;
+                    i++;
                     CommandBuffer.AddComponent(instance, enemyData);
 
 

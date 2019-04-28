@@ -24,7 +24,7 @@ public struct EnemyData : IComponentData
 {
     public float movementSpeed;
     public float slowingDistance;
-    public float minNeighbourDist;
+    public float maxNeighbourDist;
     public float attackRange;
     public float fleeDistance;
     public float maxSpeed;
@@ -37,6 +37,7 @@ public struct EnemyData : IComponentData
     public bool shouldDestroy;
     public bool inRange;
     public bool fleeing;
+    public int index;
 }
 
 public struct EnemySpawnData : IComponentData
