@@ -5,22 +5,41 @@ using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
 using Unity.Rendering;
+using Unity.Mathematics;
 
 public class BoidECS : JobComponentSystem
 {
+    public static Vector3 targetPos;
+    //public static Entity projectileEntity;
+    public NativeHashMap<Vector3, ProjectileData> projectileHashMap;
+    //public static Rotation 
+
+    protected override void OnCreateManager()
+    {
+        projectileHashMap = new NativeHashMap<Vector3, ProjectileData>(1000, Allocator.Persistent);
+        Debug.Log("On Create!");
+    }
+
+    protected override void OnDestroyManager()
+    {
+        base.OnDestroyManager();
+        projectileHashMap.Dispose();
+        Debug.Log("on destroy");
+    }
+
     protected override JobHandle OnUpdate(JobHandle handle)
     {
         var arriveJob = new ArriveJob
         {
             deltaTime = Time.deltaTime,
-            targetPos = new Translation(),
+            targetPos = new Translation() { Value = targetPos},
             targetRot = new Rotation()
         }.Schedule(this, handle);
         arriveJob.Complete();
 
         var fleeJob = new FleeJob
         {
-            targetPos = new Translation(),
+            targetPos = new Translation() { Value = targetPos },
             targetRot = new Rotation()
         }.Schedule(this, arriveJob);
         fleeJob.Complete();
@@ -29,20 +48,21 @@ public class BoidECS : JobComponentSystem
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
             deltaTime = Time.deltaTime,
-            //projectileArchtype = World.Active.EntityManager.CreateArchetype(
-            //typeof(Rotation),
-            //typeof(Translation),
-            //typeof(RenderMesh),
-            //typeof(ProjectileData)
-            //),
-            //renderMesh = ComponentData.renderMesh
-    }.Schedule(this, fleeJob);
-
+            targetPos = new Translation() { Value = targetPos },
+            hashMap = projectileHashMap
+        }.Schedule(this, fleeJob);
         boidJob.Complete();
+
+
+        var projectileJob = new ProjectileSpawnJob
+        {
+            cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
+            hashMap = projectileHashMap
+        }.Schedule(this, boidJob);
+        projectileJob.Complete();
 
         var destroyJob = new DestroyJob()
         {
-            //cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer()
         }.Schedule(this, boidJob);
         destroyJob.Complete();
 
@@ -52,14 +72,17 @@ public class BoidECS : JobComponentSystem
     [BurstCompile]
     private struct BoidJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
     {
-        //public EntityArchetype projectileArchtype;
-        //public RenderMesh renderMesh;
         [ReadOnly] public EntityCommandBuffer cmdBuffer;
         public float deltaTime;
+        public Translation targetPos;
+        //public Entity projectileToSpawn;
 
-        //public Unity.Mathematics.Random random;
+        [NativeDisableParallelForRestriction]
+        public NativeHashMap<Vector3, ProjectileData> hashMap;
+
         public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
         {
+            //hashMap.Dispose();
             if (!enemyData.inRange)
             {
                 trans.Value += enemyData.force;
@@ -68,6 +91,13 @@ public class BoidECS : JobComponentSystem
             }
             else
             {
+                hashMap.TryAdd(trans.Value, new ProjectileData
+                {
+                    speed = 2.0f,
+                    target = targetPos.Value
+                });
+
+                #region old
                 //Spawn projectiles every few seconds 
                 //Send projectiles towards target
                 //When in range create explosion effect and damage target
@@ -88,9 +118,24 @@ public class BoidECS : JobComponentSystem
                 //    //startingPos = data[i].startingPos,
                 //    target = new Translation().Value
                 //});
-                
+
                 //cmdBuffer.AddSharedComponent(entity, renderMesh);
-                ComponentData.Spawn(trans.Value, rot.Value);
+                //ComponentData.Spawn(trans.Value, rot.Value);
+
+                //var instance = cmdBuffer.Instantiate(projectileEntity);
+
+
+                //var instance = cmdBuffer.Instantiate(entity);
+                ////var position = trans.Value;
+
+                //cmdBuffer.SetComponent(instance, new Translation { Value = trans.Value });
+
+                //cmdBuffer.SetComponent(instance, new Scale { Value = 5 });
+
+                //enemyData.shouldDestroy = false;
+                //enemyData.inRange = false;
+                //cmdBuffer.AddComponent(instance, enemyData);
+                #endregion
             }
 
             //var temp = enemyData.force / enemyData.mass;
@@ -105,7 +150,7 @@ public class BoidECS : JobComponentSystem
             //    enemyData.velocity *= (1.0f - (enemyData.damping * deltaTime));
             //}
 
-            
+
 
             if (enemyData.shouldDestroy && entity != null)
             {
@@ -140,6 +185,7 @@ public class BoidECS : JobComponentSystem
                 var desired = clamped * (dir / distance);
 
                 enemyData.force += desired * deltaTime;
+                enemyData.inRange = false;
             }
         }
     }
@@ -168,6 +214,42 @@ public class BoidECS : JobComponentSystem
         }
     }
 
+    private struct ProjectileSpawnJob : IJobForEachWithEntity<ProjectileSpawnData, LocalToWorld, ProjectileData>
+    {
+        [ReadOnly] public EntityCommandBuffer cmdBuffer;
+
+        [NativeDisableParallelForRestriction]
+        public NativeHashMap<Vector3, ProjectileData> hashMap;
+        public void Execute(Entity entity, int index, ref ProjectileSpawnData projectileSpawnData, ref LocalToWorld location, ref ProjectileData projectileData)
+        {
+            var keyArray = hashMap.GetKeyArray(Allocator.Temp);
+
+            for (int i = 0; i < keyArray.Length; i++)
+            {
+                var instance = cmdBuffer.Instantiate(projectileSpawnData.prefab);
+                var position = keyArray[i];
+
+                cmdBuffer.SetComponent(instance, new Translation { Value = position });
+
+                cmdBuffer.AddComponent(instance, hashMap[position]);
+                hashMap.Remove(keyArray[i]);
+            }
+            //hashMap.Dispose();
+
+            //for (int i = 0; i < projectileHashMap.Length; i++)
+            //{
+            //    var instance = cmdBuffer.Instantiate(projectileSpawnData.prefab);
+            //    var position = projectileHashMap.
+
+            //    cmdBuffer.SetComponent(instance, new Translation { Value = position });
+
+            //    enemyData.shouldDestroy = false;
+            //    enemyData.inRange = false;
+            //    cmdBuffer.AddComponent(instance, enemyData);
+            //}
+
+        }
+    }
 
     [BurstCompile]
     private struct DestroyJob : IJobForEachWithEntity<EnemyData>

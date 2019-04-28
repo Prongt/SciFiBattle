@@ -67,7 +67,8 @@ public struct ProjectileData : IComponentData
 [Serializable]
 public struct ProjectileSpawnData : IComponentData
 {
-    public RenderMesh mesh;
+    public Entity prefab;
+    //public RenderMesh mesh;
 }
 
 public class ComponentData : MonoBehaviour
@@ -77,10 +78,19 @@ public class ComponentData : MonoBehaviour
     [SerializeField] public ProjectileSpawnData spawnData;
     public RenderMesh mesh;
     public static RenderMesh renderMesh;
+    public GameObject target;
 
     //public static List<ProjectileData> projectiles;
+
+    private void Update()
+    {
+        BoidECS.targetPos = target.transform.position;
+    }
     private void Awake()
     {
+        BoidECS.targetPos = target.transform.position;
+        //BoidECS.projectileHashMap = new NativeHashMap<Vector3, ProjectileData>();
+
         renderMesh = mesh;
         //projectiles = new List<ProjectileData>();
 

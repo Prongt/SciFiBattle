@@ -52,6 +52,8 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
         };
         dstManager.AddComponentData(entity, eData);
 
+        //BoidECS.projectileEntity = entity;
+
         #region PhysicsStuffNotImplemented
 
         //sourceCollider = dstManager.GetComponentData<PhysicsCollider>(entity).Value;
