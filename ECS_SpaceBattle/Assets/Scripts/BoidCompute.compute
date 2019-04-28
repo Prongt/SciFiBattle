@@ -36,4 +36,6 @@ void Boid (uint3 id : SV_DispatchThreadID)
 	dataBuffer[id.x].pos += desired * dataBuffer[id.x].d.z;
 
     //Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+
+
 }
