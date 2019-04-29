@@ -19,6 +19,7 @@ public struct TargetData : IComponentData
     public float slowingDistance;
 }
 
+
 [Serializable]
 public struct EnemyData : IComponentData
 {
@@ -38,6 +39,7 @@ public struct EnemyData : IComponentData
     public bool inRange;
     public bool fleeing;
     public int index;
+    public int cell;
 }
 
 public struct EnemySpawnData : IComponentData
@@ -47,10 +49,13 @@ public struct EnemySpawnData : IComponentData
     public int countY;
 }
 
-//public struct ColliderData : IComponentData
-//{
-//    public BoxCollider col;
-//}
+public struct NeighbourData
+{
+    public int boidIndex;
+    public Vector3 pos;
+}
+
+
 
 public struct TargetSpawnData : IComponentData
 {

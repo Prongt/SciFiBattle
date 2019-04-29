@@ -17,12 +17,16 @@ public class BoidECS : JobComponentSystem
     public NativeHashMap<int, Vector3> boidPositions;
     public NativeMultiHashMap<int, Vector3> boidNeighbours;
 
+    public NativeMultiHashMap<int, Vector3> cellMap;
+
     protected override void OnCreateManager()
     {
         projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
 
         boidPositions = new NativeHashMap<int, Vector3>(2500, Allocator.Persistent);
         boidNeighbours = new NativeMultiHashMap<int, Vector3>(2500 * maxNeighbours, Allocator.Persistent);
+
+        cellMap = new NativeMultiHashMap<int, Vector3>(2500 * maxNeighbours, Allocator.Persistent);
 
         Debug.Log("On Create!");
     }
@@ -33,6 +37,7 @@ public class BoidECS : JobComponentSystem
         projectileHashMap.Dispose();
         boidPositions.Dispose();
         boidNeighbours.Dispose();
+        cellMap.Dispose();
         Debug.Log("on destroy");
     }
 
@@ -43,20 +48,33 @@ public class BoidECS : JobComponentSystem
             positions = boidPositions
         }.Schedule(this, handle);
         updatePosJob.Complete();
-        var neighbourJob = new NeighbourJob
+
+        var cellJob = new CellSpacePartitionJob
         {
-            positions = boidPositions,
-            hashMap = boidNeighbours,
-            maxNeighbours = maxNeighbours
-        }.Schedule(this,updatePosJob);
-        neighbourJob.Complete();
+            cellSize = 10,
+            gridSize = 2000,
+            cellMap = boidNeighbours.ToConcurrent(),
+            positions = boidPositions
+        }.Schedule(this, updatePosJob);
+        cellJob.Complete();
+
+        //var neighbourJob = new NeighbourJob
+        //{
+        //    positions = boidPositions,
+        //    hashMap = boidNeighbours,
+        //    maxNeighbours = maxNeighbours,
+        //    cellMap = cellMap,
+        //    cellSize = 10,
+        //    gridSize = 2000
+        //}.Schedule(this,cellJob);
+        //neighbourJob.Complete();
 
         var arriveJob = new ArriveJob
         {
             deltaTime = Time.deltaTime,
             targetPos = new Translation() { Value = targetPos},
             targetRot = new Rotation()
-        }.Schedule(this, neighbourJob);
+        }.Schedule(this, cellJob);
         arriveJob.Complete();
 
         var fleeJob = new FleeJob
@@ -193,6 +211,7 @@ public class BoidECS : JobComponentSystem
             {
                 cmdBuffer.DestroyEntity(entity);
             }
+            //hashMap.Clear();
         }
     }
 
@@ -272,86 +291,95 @@ public class BoidECS : JobComponentSystem
         [NativeDisableParallelForRestriction]
         public NativeMultiHashMap<int, Vector3> hashMap;
 
+        [NativeDisableParallelForRestriction]
+        public NativeMultiHashMap<int, Vector3> cellMap;
+
         public int maxNeighbours;
+        public int cellSize;
+        public int gridSize;
         public void Execute(Entity entity, int jobIndex, ref EnemyData data, ref Translation trans)
         {
+            return;
             var maxDist = data.maxNeighbourDist;
             var neighbourCount = 0;
             var boidPos = trans.Value;
             NativeMultiHashMapIterator<int> it;
             var index = data.index;
 
-            if (hashMap.TryGetFirstValue(index, out Vector3 neighbourPos, out it))
-            {
-                do
-                {
-                    //Debug.Log("Success");
-                    if (Vector3.Distance(boidPos, neighbourPos) < maxDist)
-                    {
-                        neighbourCount++;
-                        
-                    }
-                    else
-                    {
-                        hashMap.TryRemove(index, neighbourPos);
-                    }
-                } while (hashMap.TryGetNextValue(out neighbourPos, ref it));
-            }
-
-
-            //while (neighbourCount < maxNeighbours)
+            //if (hashMap.TryGetFirstValue(index, out Vector3 neighbourPos, out it))
             //{
-            //    for (int i = 0; i < positions.Length; i++)
+            //    do
             //    {
-            //        if (positions[i] != null && i != index)
+            //        //Debug.Log("Success");
+            //        if (Vector3.Distance(boidPos, neighbourPos) < maxDist)
             //        {
-            //            if (Vector3.Distance(boidPos, positions[i]) < maxDist)
-            //            {
-            //                neighbourCount++;
-            //                //hashMap.Add(index, positions[i]);
-            //            }
+            //            neighbourCount++;
+                        
             //        }
-            //    }
+            //        else
+            //        {
+            //            hashMap.TryRemove(index, neighbourPos);
+            //        }
+            //    } while (hashMap.TryGetNextValue(out neighbourPos, ref it));
             //}
+
+            NativeMultiHashMapIterator<int> itter;
+
+            //if (cellMap.TryGetFirstValue(data.cell, out NeighbourData info, out itter))
+            //{
+            //    do
+            //    {
+            //        if (Vector3.Distance(boidPos, info.pos) < maxDist && info.boidIndex != index && neighbourCount < maxNeighbours)
+            //        {
+            //            neighbourCount++;
+            //            hashMap.Add(index, info.pos);
+
+            //        }
+            //    } while (cellMap.TryGetNextValue(out info, ref itter));
+            //}
+
+            //cellMap.Clear();
+            //Vector3 v;
 
             //for (int i = 0; i < positions.Length; i++)
             //{
-            //    if (positions[i] != null && positions[i] != (Vector3)trans.Value && neighbourCount < maxNeighbours)
+            //    if (neighbourCount > maxNeighbours)
             //    {
-            //        if (Vector3.Distance(boidPos, positions[i]) < maxDist)
-            //        {
-            //            neighbourCount++;
-            //            //hashMap.Add(index, positions[i]);
-            //        }
+            //        break;
             //    }
 
+            //    if (positions.TryGetValue(i, out v))
+            //    {
+            //        if (Vector3.Distance(boidPos, v) < maxDist)
+            //        {
+            //            neighbourCount++;
+            //            hashMap.Add(index, v);
 
+            //        }
+            //    }
             //}
-            Vector3 v;
+        }
+    }
 
-            for (int i = 0; i < positions.Length; i++)
-            {
-                if (neighbourCount > maxNeighbours)
-                {
-                    break;
-                }
+    [BurstCompile]
+    struct CellSpacePartitionJob : IJobForEachWithEntity<EnemyData, Translation>
+    {
 
-                if (positions.TryGetValue(i, out v))
-                {
-                    if (Vector3.Distance(boidPos, v) < maxDist)
-                    {
-                        neighbourCount++;
-                        //hashMap.Add(index, v);
+        [NativeDisableParallelForRestriction]
+        public NativeHashMap<int, Vector3> positions;
 
-                    }
-                }
-                
-                
-            }
-            
-                
+        public NativeMultiHashMap<int, Vector3>.Concurrent cellMap;
 
-            //positions.Clear();
+        public int cellSize;
+        public int gridSize;
+
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans)
+        {
+            var cell = ((int)(trans.Value.x / cellSize))
+                + ((int)(trans.Value.z / cellSize)) * gridSize;
+
+            data.cell = cell;
+            cellMap.Add(cell, trans.Value);
         }
     }
 
@@ -395,4 +423,5 @@ public class BoidECS : JobComponentSystem
             //}
         }
     }
+
 }

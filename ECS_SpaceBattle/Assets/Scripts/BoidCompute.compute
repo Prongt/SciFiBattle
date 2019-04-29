@@ -1,17 +1,17 @@
-﻿// Each #kernel tells which function to compile; you can have many kernels
+﻿/*
+// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Boid
 
 
 struct data
 {
+	float id;
 	float3 pos;
-	/*float id;
-	float moveSpeed;
-	float slowingDist;
-	float timeDelta;*/
-	float3 d;
-	float3 targetPos;
+	float3 neighboursPos[];
 };
+
+float count;
+float maxDist;
 
 
 RWStructuredBuffer<data> dataBuffer;
@@ -22,16 +22,30 @@ RWTexture2D<float4> Result;
 [numthreads(8,8,1)]
 void Boid (uint3 id : SV_DispatchThreadID)
 {
+/*
+	 maxDist = 10;
+    var neighbourCount = 0;
+    var boidPos = trans.Value;
+    NativeMultiHashMapIterator<int> it;
+    var index = data.index;
 
-	float3 dir = dataBuffer[id.x].targetPos - dataBuffer[id.x].pos;
+	for (int i = 0; i < positions.Length; i++)
+    {
+        if (neighbourCount > maxNeighbours)
+        {
+            break;
+        }
 
-	float3 distance = sqrt(dir.x + dir.y + dir.z);
-
-
-	float3 ramped = dataBuffer[id.x].d.x * (distance / dataBuffer[id.x].d.y);
-	float3 clamped = min(ramped, dataBuffer[id.x].d.x);
-	float3 desired = clamped * (dir / distance);
-
+        if (positions.TryGetValue(i, out v))
+        {
+            if (Vector3.Distance(boidPos, v) < maxDist)
+            {
+                neighbourCount++;
+                //hashMap.Add(index, v);
+            }
+        }           
+    }
+	*/
 
 	dataBuffer[id.x].pos += desired * dataBuffer[id.x].d.z;
 
@@ -39,3 +53,4 @@ void Boid (uint3 id : SV_DispatchThreadID)
 
 
 }
+*/
