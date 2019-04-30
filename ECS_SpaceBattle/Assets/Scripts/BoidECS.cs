@@ -2,10 +2,9 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using Unity.Rendering;
-using Unity.Mathematics;
 
 public class BoidECS : JobComponentSystem
 {
@@ -14,6 +13,9 @@ public class BoidECS : JobComponentSystem
     public NativeHashMap<int, ProjectileData> projectileHashMap;
 
     public int maxNeighbours = 10;
+    public int cellSize = 10;
+    public int gridSize = 2000;
+    public int maxNeighbourDist = 10;
     public NativeHashMap<int, Vector3> boidPositions;
     public NativeMultiHashMap<int, Vector3> boidNeighbours;
 
@@ -25,7 +27,6 @@ public class BoidECS : JobComponentSystem
 
         boidPositions = new NativeHashMap<int, Vector3>(2500, Allocator.Persistent);
         boidNeighbours = new NativeMultiHashMap<int, Vector3>(2500 * maxNeighbours, Allocator.Persistent);
-
         cellMap = new NativeMultiHashMap<int, NeighbourData>(2500 * maxNeighbours, Allocator.Persistent);
 
         Debug.Log("On Create!");
@@ -51,8 +52,8 @@ public class BoidECS : JobComponentSystem
 
         var cellJob = new CellSpacePartitionJob
         {
-            cellSize = 10,
-            gridSize = 2000,
+            cellSize = cellSize,
+            gridSize = gridSize,
             cellMap = cellMap,
             positions = boidPositions
         }.Schedule(updatePosJob);
@@ -64,9 +65,9 @@ public class BoidECS : JobComponentSystem
             neighbourMap = boidNeighbours,
             maxNeighbours = maxNeighbours,
             cellMap = cellMap,
-            cellSize = 10,
-            gridSize = 2000,
-            maxNeighbourDist = 10
+            cellSize = cellSize,
+            gridSize = gridSize,
+            maxNeighbourDist = maxNeighbourDist
         }.Schedule(cellJob);
         neighbourJob.Complete();
 
@@ -300,6 +301,8 @@ public class BoidECS : JobComponentSystem
         public int gridSize;
         public float maxNeighbourDist;
 
+        #region old 
+        /*
         public void Execute(Entity entity, int jobIndex, ref EnemyData data, ref Translation trans)
         {
             var maxDist = data.maxNeighbourDist;
@@ -363,7 +366,8 @@ public class BoidECS : JobComponentSystem
             //    }
             //}
         }
-
+        */
+        #endregion
         public void Execute()
         {
             var cmap = cellMap;
@@ -393,165 +397,165 @@ public class BoidECS : JobComponentSystem
         }
     }
 
-        [BurstCompile]
-        struct CellSpacePartitionJob : IJob
+    [BurstCompile]
+    struct CellSpacePartitionJob : IJob
+    {
+
+        //[NativeDisableParallelForRestriction]
+        public NativeHashMap<int, Vector3> positions;
+
+        public NativeMultiHashMap<int, NeighbourData> cellMap;
+
+        public int cellSize;
+        public int gridSize;
+
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans)
         {
+            //Remove previous entry
 
-            //[NativeDisableParallelForRestriction]
-            public NativeHashMap<int, Vector3> positions;
+            var cell = ((int)(trans.Value.x / cellSize))
+                + ((int)(trans.Value.z / cellSize)) * gridSize;
 
-            public NativeMultiHashMap<int, NeighbourData> cellMap;
+            var a = new NativeList<NeighbourData>(cellMap.Length, Allocator.Temp);
 
-            public int cellSize;
-            public int gridSize;
-
-            public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans)
+            if (data.cell != cell)
             {
-                //Remove previous entry
-
-                var cell = ((int)(trans.Value.x / cellSize))
-                    + ((int)(trans.Value.z / cellSize)) * gridSize;
-
-                var a = new NativeList<NeighbourData>(cellMap.Length, Allocator.Temp);
-
-                if (data.cell != cell)
+                NativeMultiHashMapIterator<int> it;
+                if (cellMap.TryGetFirstValue(data.cell, out NeighbourData d, out it))
                 {
-                    NativeMultiHashMapIterator<int> it;
-                    if (cellMap.TryGetFirstValue(data.cell, out NeighbourData d, out it))
+                    do
                     {
-                        do
+                        if (d.boidIndex == data.index)
                         {
-                            if (d.boidIndex == data.index)
-                            {
-                                cellMap.SetValue(
-                                    new NeighbourData
-                                    {
-                                        boidIndex = -10,
-                                        pos = trans.Value
-                                    },
+                            cellMap.SetValue(
+                                new NeighbourData
+                                {
+                                    boidIndex = -10,
+                                    pos = trans.Value
+                                },
+                            it
+                            );
+                        }
+                        else
+                        {
+                            a.Add(d);
+                        }
+                    } while (cellMap.TryGetNextValue(out d, ref it));
+                }
+            }
+            else
+            {
+                var nd = new NeighbourData
+                {
+                    boidIndex = data.index,
+                    pos = trans.Value
+                };
+                NativeMultiHashMapIterator<int> it;
+                if (cellMap.TryGetFirstValue(cell, out NeighbourData d, out it))
+                {
+                    do
+                    {
+                        if (d.boidIndex == -10)
+                        {
+                            cellMap.SetValue(
+                                nd,
                                 it
                                 );
-                            }
-                            else
-                            {
-                                a.Add(d);
-                            }
-                        } while (cellMap.TryGetNextValue(out d, ref it));
-                    }
+                        }
+                        a.Add(d);
+                    } while (cellMap.TryGetNextValue(out d, ref it));
                 }
                 else
                 {
-                    var nd = new NeighbourData
-                    {
-                        boidIndex = data.index,
-                        pos = trans.Value
-                    };
-                    NativeMultiHashMapIterator<int> it;
-                    if (cellMap.TryGetFirstValue(cell, out NeighbourData d, out it))
-                    {
-                        do
-                        {
-                            if (d.boidIndex == -10)
-                            {
-                                cellMap.SetValue(
-                                    nd,
-                                    it
-                                    );
-                            }
-                            a.Add(d);
-                        } while (cellMap.TryGetNextValue(out d, ref it));
-                    }
-                    else
-                    {
-                        cellMap.Add(cell, nd);
-                        a.Add(nd);
-                    }
+                    cellMap.Add(cell, nd);
+                    a.Add(nd);
                 }
-
-
-
-
-                data.cell = cell;
-
-                //var neighbourData = new NeighbourData
-                //{
-                //    boidIndex = data.index,
-                //    pos = trans.Value
-                //};
-
-                //var keyArray = cellMap.GetKeyArray(Allocator.Temp);
-                //cellMap.Add(cell, neighbourData);
-
-
-
-                //if (!keyArray.Contains(cell))
-                //{
-                //    cellMap.Add(cell, trans.Value);
-                //}
-                //else
-                //{
-                //    //cellMap.
-                //}
-
             }
 
-            public void Execute()
-            {
-                var cmap = cellMap;
-                cmap.Clear();
-                for (int i = 0; i < positions.Length; i++)
-                {
-                    if (positions.TryGetValue(i, out Vector3 p))
-                    {
-                        var cell = ((int)(p.x / cellSize))
-                    + ((int)(p.z / cellSize)) * gridSize;
 
-                        cmap.Add(i, new NeighbourData { boidIndex = i, pos = positions[i] });
-                    }
-                }
-                cellMap = cmap;
-            }
+
+
+            data.cell = cell;
+
+            //var neighbourData = new NeighbourData
+            //{
+            //    boidIndex = data.index,
+            //    pos = trans.Value
+            //};
+
+            //var keyArray = cellMap.GetKeyArray(Allocator.Temp);
+            //cellMap.Add(cell, neighbourData);
+
+
+
+            //if (!keyArray.Contains(cell))
+            //{
+            //    cellMap.Add(cell, trans.Value);
+            //}
+            //else
+            //{
+            //    //cellMap.
+            //}
+
         }
 
-        private struct ProjectileSpawnJob : IJobForEachWithEntity<ProjectileSpawnData, LocalToWorld, ProjectileData>
+        public void Execute()
         {
-            [ReadOnly] public EntityCommandBuffer cmdBuffer;
-
-            [NativeDisableParallelForRestriction]
-            public NativeHashMap<int, ProjectileData> hashMap;
-            public void Execute(Entity entity, int index, ref ProjectileSpawnData projectileSpawnData, ref LocalToWorld location, ref ProjectileData projectileData)
+            var cmap = cellMap;
+            cmap.Clear();
+            for (int i = 0; i < positions.Length; i++)
             {
-                for (int i = 0; i < hashMap.Length; i++)
+                if (positions.TryGetValue(i, out Vector3 p))
                 {
-                    if (i >= hashMap.Length)
-                    {
-                        continue;
-                    }
-                    var instance = cmdBuffer.Instantiate(projectileSpawnData.prefab);
-                    var data = hashMap[i];
+                    var cell = ((int)(p.x / cellSize))
+                + ((int)(p.z / cellSize)) * gridSize;
 
-                    var pos = math.transform(location.Value, data.startingPos);
-                    cmdBuffer.SetComponent(instance, new Translation { Value = pos });
-
-                    cmdBuffer.AddComponent(instance, data);
+                    cmap.Add(cell, new NeighbourData { boidIndex = i, pos = positions[i] });
                 }
-                hashMap.Clear();
-
-
             }
+            cellMap = cmap;
         }
-
-        [BurstCompile]
-        private struct DestroyJob : IJobForEachWithEntity<EnemyData>
-        {
-            //[ReadOnly] public EntityCommandBuffer cmdBuffer;
-            public void Execute(Entity entity, int index, ref EnemyData enemyData)
-            {
-                //if (enemyData.shouldDestroy && entity != null)
-                //{
-                //    cmdBuffer.DestroyEntity(entity);
-                //}
-            }
-        }
-
     }
+
+    private struct ProjectileSpawnJob : IJobForEachWithEntity<ProjectileSpawnData, LocalToWorld, ProjectileData>
+    {
+        [ReadOnly] public EntityCommandBuffer cmdBuffer;
+
+        [NativeDisableParallelForRestriction]
+        public NativeHashMap<int, ProjectileData> hashMap;
+        public void Execute(Entity entity, int index, ref ProjectileSpawnData projectileSpawnData, ref LocalToWorld location, ref ProjectileData projectileData)
+        {
+            for (int i = 0; i < hashMap.Length; i++)
+            {
+                if (i >= hashMap.Length)
+                {
+                    continue;
+                }
+                var instance = cmdBuffer.Instantiate(projectileSpawnData.prefab);
+                var data = hashMap[i];
+
+                var pos = math.transform(location.Value, data.startingPos);
+                cmdBuffer.SetComponent(instance, new Translation { Value = pos });
+
+                cmdBuffer.AddComponent(instance, data);
+            }
+            hashMap.Clear();
+
+
+        }
+    }
+
+    [BurstCompile]
+    private struct DestroyJob : IJobForEachWithEntity<EnemyData>
+    {
+        //[ReadOnly] public EntityCommandBuffer cmdBuffer;
+        public void Execute(Entity entity, int index, ref EnemyData enemyData)
+        {
+            //if (enemyData.shouldDestroy && entity != null)
+            //{
+            //    cmdBuffer.DestroyEntity(entity);
+            //}
+        }
+    }
+
+}
