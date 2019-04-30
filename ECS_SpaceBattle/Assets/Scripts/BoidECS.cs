@@ -10,7 +10,7 @@ public class BoidECS : JobComponentSystem
 {
     public static Vector3 targetPos;
 
-    public NativeHashMap<int, ProjectileData> projectileHashMap;
+    //public NativeHashMap<int, ProjectileData> projectileHashMap;
 
     public int maxNeighbours = 10;
     public int cellSize = 10;
@@ -23,7 +23,7 @@ public class BoidECS : JobComponentSystem
 
     protected override void OnCreateManager()
     {
-        projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
+        //projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
 
         boidPositions = new NativeHashMap<int, Vector3>(2500, Allocator.Persistent);
         boidNeighbours = new NativeMultiHashMap<int, Vector3>(2500 * maxNeighbours, Allocator.Persistent);
@@ -35,7 +35,7 @@ public class BoidECS : JobComponentSystem
     protected override void OnDestroyManager()
     {
         base.OnDestroyManager();
-        projectileHashMap.Dispose();
+        //projectileHashMap.Dispose();
         boidPositions.Dispose();
         boidNeighbours.Dispose();
         cellMap.Dispose();
@@ -48,7 +48,7 @@ public class BoidECS : JobComponentSystem
         {
             positions = boidPositions
         }.Schedule(this, handle);
-        updatePosJob.Complete();
+        
 
         var cellJob = new CellSpacePartitionJob
         {
@@ -57,7 +57,7 @@ public class BoidECS : JobComponentSystem
             cellMap = cellMap,
             positions = boidPositions
         }.Schedule(updatePosJob);
-        cellJob.Complete();
+        
 
         var neighbourJob = new NeighbourJob
         {
@@ -69,7 +69,7 @@ public class BoidECS : JobComponentSystem
             gridSize = gridSize,
             maxNeighbourDist = maxNeighbourDist
         }.Schedule(cellJob);
-        neighbourJob.Complete();
+        
 
         var arriveJob = new ArriveJob
         {
@@ -77,14 +77,14 @@ public class BoidECS : JobComponentSystem
             targetPos = new Translation() { Value = targetPos },
             targetRot = new Rotation()
         }.Schedule(this, neighbourJob);
-        arriveJob.Complete();
+        
 
         var fleeJob = new FleeJob
         {
             targetPos = new Translation() { Value = targetPos },
             targetRot = new Rotation()
         }.Schedule(this, arriveJob);
-        fleeJob.Complete();
+        
 
         var boidJob = new BoidJob()
         {
@@ -93,7 +93,7 @@ public class BoidECS : JobComponentSystem
             targetPos = new Translation() { Value = targetPos },
             hashMap = boidNeighbours
         }.Schedule(this, fleeJob);
-        boidJob.Complete();
+        
 
 
         //var projectileJob = new ProjectileSpawnJob
@@ -105,7 +105,14 @@ public class BoidECS : JobComponentSystem
 
         var destroyJob = new DestroyJob()
         {
-        }.Schedule(this, boidJob);
+        }.Schedule(boidJob);
+
+        updatePosJob.Complete();
+        cellJob.Complete();
+        neighbourJob.Complete();
+        arriveJob.Complete();
+        fleeJob.Complete();
+        boidJob.Complete();
         destroyJob.Complete();
 
         return destroyJob;
@@ -370,30 +377,62 @@ public class BoidECS : JobComponentSystem
         #endregion
         public void Execute()
         {
-            var cmap = cellMap;
-            var nmap = neighbourMap;
-            nmap.Clear();
+            //var cmap = cellMap;
+            //var nmap = neighbourMap;
+            //nmap.Clear();
+            neighbourMap.Clear();
+
+            int count;
 
             for (int i = 0; i < positions.Length; i++)
             {
+                count = 0;
                 if (positions.TryGetValue(i, out Vector3 p))
                 {
                     var cell = ((int)(p.x / cellSize))
                     + ((int)(p.z / cellSize)) * gridSize;
 
                     NativeMultiHashMapIterator<int> it;
-                    if (cmap.TryGetFirstValue(cell, out NeighbourData neighbourData, out it))
+                    if (cellMap.TryGetFirstValue(cell, out NeighbourData neighbourData, out it))
                     {
                         do
                         {
-                            if (neighbourData.boidIndex != i)
+                            //TODO breakout of loop when max neighbours is reached
+                            if (neighbourData.boidIndex != i && count < maxNeighbours)
                             {
-                                nmap.Add(i, neighbourData.pos);
+                                neighbourMap.Add(i, neighbourData.pos);
+                                count++;
                             }
                         } while (cellMap.TryGetNextValue(out neighbourData, ref it));
                     }
                 }
             }
+            //neighbourMap = nmap;
+        }
+
+        public void Execute(int i)
+        {
+                int count = 0;
+                if (positions.TryGetValue(i, out Vector3 p))
+                {
+                    var cell = ((int)(p.x / cellSize))
+                    + ((int)(p.z / cellSize)) * gridSize;
+
+                    NativeMultiHashMapIterator<int> it;
+                    if (cellMap.TryGetFirstValue(cell, out NeighbourData neighbourData, out it))
+                    {
+                        do
+                        {
+                            //TODO breakout of loop when max neighbours is reached
+                            if (neighbourData.boidIndex != i && count < maxNeighbours)
+                            {
+                                neighbourMap.Add(i, neighbourData.pos);
+                                count++;
+                            }
+                        } while (cellMap.TryGetNextValue(out neighbourData, ref it));
+                    }
+                }
+            
         }
     }
 
@@ -546,7 +585,7 @@ public class BoidECS : JobComponentSystem
     }
 
     [BurstCompile]
-    private struct DestroyJob : IJobForEachWithEntity<EnemyData>
+    private struct DestroyJob : IJob
     {
         //[ReadOnly] public EntityCommandBuffer cmdBuffer;
         public void Execute(Entity entity, int index, ref EnemyData enemyData)
@@ -555,6 +594,11 @@ public class BoidECS : JobComponentSystem
             //{
             //    cmdBuffer.DestroyEntity(entity);
             //}
+        }
+
+        public void Execute()
+        {
+            //throw new System.NotImplementedException();
         }
     }
 
