@@ -77,13 +77,18 @@ public class BoidECS : JobComponentSystem
             targetPos = new Translation() { Value = targetPos },
             targetRot = new Rotation()
         }.Schedule(this, neighbourJob);
-        
+
+        var seperationJob = new SeperationJob
+        {
+            maxNeighbours = maxNeighbours,
+            neighbourMap = boidNeighbours
+        }.Schedule(this, arriveJob);
 
         var fleeJob = new FleeJob
         {
             targetPos = new Translation() { Value = targetPos },
             targetRot = new Rotation()
-        }.Schedule(this, arriveJob);
+        }.Schedule(this, seperationJob);
         
 
         var boidJob = new BoidJob()
@@ -111,6 +116,7 @@ public class BoidECS : JobComponentSystem
         cellJob.Complete();
         neighbourJob.Complete();
         arriveJob.Complete();
+        seperationJob.Complete();
         fleeJob.Complete();
         boidJob.Complete();
         destroyJob.Complete();
@@ -221,6 +227,63 @@ public class BoidECS : JobComponentSystem
                 cmdBuffer.DestroyEntity(entity);
             }
             //hashMap.Clear();
+        }
+    }
+
+    [BurstCompile]
+    struct SeperationJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
+    {
+        [NativeDisableParallelForRestriction]
+        public NativeMultiHashMap<int, Vector3> neighbourMap;
+
+        public int maxNeighbours;
+
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation c2)
+        {
+            var force = (float3)Vector3.zero;
+            if (neighbourMap.TryGetFirstValue(data.index, out Vector3 vec, out NativeMultiHashMapIterator<int> it))
+            {
+                do
+                {
+                    var desired = (Vector3)trans.Value - vec;
+                    force += (float3)(Vector3.Normalize(desired) / desired.magnitude);
+                } while (neighbourMap.TryGetNextValue(out vec, ref it));
+            }
+            data.force += force;
+        }
+    }
+
+    public struct CohesionJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
+    {
+        [NativeDisableParallelForRestriction]
+        public NativeMultiHashMap<int, Vector3> neighbourMap;
+
+        public int maxNeighbours;
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation c2)
+        {
+            var centerOfMass = (float3)Vector3.zero;
+            
+
+            var count = 0;
+            var force = (float3)Vector3.zero;
+            if (neighbourMap.TryGetFirstValue(data.index, out Vector3 vec, out NativeMultiHashMapIterator<int> it))
+            {
+                do
+                {
+                    count++;
+                    centerOfMass += (float3)vec;
+                } while (neighbourMap.TryGetNextValue(out vec, ref it));
+            }
+
+            if (count > 0)
+            {
+                centerOfMass /= count;
+                
+                var toTarget = (Vector3)(centerOfMass - trans.Value);
+                var desired =  toTarget.normalized * data.maxSpeed;
+                force = (desired - (Vector3)data.velocity).normalized;
+            }
+            data.force += force;
         }
     }
 
