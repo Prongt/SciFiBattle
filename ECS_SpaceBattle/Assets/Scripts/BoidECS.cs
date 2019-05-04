@@ -68,7 +68,7 @@ public class BoidECS : JobComponentSystem
         {
             cellSize = cellSize,
             gridSize = gridSize,
-            cellMap = cellMap,
+            cellMap = cellMap.ToConcurrent(),
             positions = boidPositions
         }.Schedule(this, updatePosJob);
         
@@ -123,12 +123,13 @@ public class BoidECS : JobComponentSystem
             weight = fleeWeight,
             fleeDist = fleeDistance
         }.Schedule(this, allignJob);
-        
+
 
         var boidJob = new BoidJob()
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
-            deltaTime = Time.deltaTime
+            deltaTime = Time.deltaTime,
+            cellMap = cellMap
         }.Schedule(this, fleeJob);
         
 
@@ -155,6 +156,7 @@ public class BoidECS : JobComponentSystem
         boidJob.Complete();
         destroyJob.Complete();
 
+        
         return destroyJob;
     }
 
@@ -168,8 +170,8 @@ public class BoidECS : JobComponentSystem
         //[NativeDisableParallelForRestriction]
         //public NativeHashMap<int, ProjectileData> hashMap;
 
-        //[NativeDisableParallelForRestriction]
-        //public NativeMultiHashMap<int, Vector3> hashMap;
+        [NativeDisableParallelForRestriction]
+        public NativeMultiHashMap<int, NeighbourData> cellMap;
 
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
@@ -205,6 +207,7 @@ public class BoidECS : JobComponentSystem
                 data.velocity *= (1.0f - (data.damping * deltaTime));
             }
 
+            cellMap.Clear();
 
 
             if (data.shouldDestroy && entity != null)
@@ -243,7 +246,7 @@ public class BoidECS : JobComponentSystem
                 var desired = (Vector3)trans.Value - neighbours[i].pos;
                 force += (float3)(Vector3.Normalize(desired) / desired.magnitude);
             }
-            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
+            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
             data.force = outForce;
         }
     }
@@ -293,7 +296,7 @@ public class BoidECS : JobComponentSystem
 
 
 
-            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
+            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
             data.force = outForce;
         }
     }
@@ -338,7 +341,7 @@ public class BoidECS : JobComponentSystem
                 desired /= count;
                 force = desired - (r * Vector3.forward);
             }
-            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
+            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
             data.force = outForce;
         }
     }
@@ -370,7 +373,7 @@ public class BoidECS : JobComponentSystem
                 var desired = clamped * (dir / distance);
                 var force = desired * deltaTime;
 
-                float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
+                float3 outForce = (((Vector3)data.force + ((Vector3)force) * weight));
                 data.force = outForce;
                 data.inRange = false;
             //}
@@ -394,7 +397,7 @@ public class BoidECS : JobComponentSystem
                 ((Vector3)desired).Normalize();
                 desired *= data.velocity - data.maxSpeed;
                 var force = desired;
-                float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
+                float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
                 data.force = outForce;
                 
                 data.fleeing = true;
@@ -476,11 +479,16 @@ public class BoidECS : JobComponentSystem
                     //    pos = nData.pos,
                     //    rot = nData.rot
                     //});
-                    neighbourBuffer[entity].Add(new PosRot
+
+                    if (nData.boidIndex != data.index)
                     {
-                        pos = nData.pos,
-                        rot = nData.rot
-                    });
+                        neighbourBuffer[entity].Add(new PosRot
+                        {
+                            pos = nData.pos,
+                            rot = nData.rot
+                        });
+                    }
+                    
                     
                 } while (cellMap.TryGetNextValue(out nData, ref iterator));
             }
@@ -667,7 +675,7 @@ public class BoidECS : JobComponentSystem
         public NativeHashMap<int, PosRot> positions;
 
         [NativeDisableParallelForRestriction]
-        public NativeMultiHashMap<int, NeighbourData> cellMap;
+        public NativeMultiHashMap<int, NeighbourData>.Concurrent cellMap;
 
         public int cellSize;
         public int gridSize;
@@ -765,7 +773,7 @@ public class BoidECS : JobComponentSystem
         #endregion
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            return;
+            //return;
             var pos = trans.Value;
             var cell = ((int)(pos.x / cellSize))
                 + ((int)(pos.z / cellSize)) * gridSize;
@@ -775,7 +783,7 @@ public class BoidECS : JobComponentSystem
                 pos = trans.Value,
                 rot = rot.Value
             });
-
+            
             data.cell = cell;
 
         }

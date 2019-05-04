@@ -167,6 +167,7 @@ MonoBehaviour:
   AllignmentWeight: 1
   SeperationWeight: 1
   CohesionWeight: 1
+  fleeWeight: 1
   target: {fileID: 1892527994}
 --- !u!1 &564158331
 GameObject:
