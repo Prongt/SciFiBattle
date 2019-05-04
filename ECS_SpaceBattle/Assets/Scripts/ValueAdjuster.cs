@@ -9,7 +9,10 @@ public class ValueAdjuster : MonoBehaviour
     [Range(1, 100)] public float SeperationWeight = 1;
     [Range(1, 100)] public float CohesionWeight = 1;
     [Range(1, 100)] public float fleeWeight = 1;
-
+    [Range(1, 100)] public float cellSize = 10;
+    [Range(1, 10000)] public float gridSize = 2000;
+    [Range(1, 100)] public float boidMass = 1;
+    [Range(1, 100)] public float boidDamping = 1;
     public Transform target;
 
     private void Awake()
@@ -24,5 +27,9 @@ public class ValueAdjuster : MonoBehaviour
         BoidECS.SeperationWeight = SeperationWeight;
         BoidECS.fleeWeight = fleeWeight;
         BoidECS.targetPos = target.position;
+        BoidECS.cellSize = cellSize;
+        BoidECS.gridSize = gridSize;
+        BoidECS.boidMass = boidMass;
+        BoidECS.boidDamping = boidDamping;
     }
 }

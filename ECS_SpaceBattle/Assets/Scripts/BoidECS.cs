@@ -13,8 +13,7 @@ public class BoidECS : JobComponentSystem
     //public NativeHashMap<int, ProjectileData> projectileHashMap;
 
     public int maxNeighbours = 20;
-    public int cellSize = 10;
-    public int gridSize = 2000;
+    
     public int maxNeighbourDist = 10;
     public NativeHashMap<int, PosRot> boidPositions;
     public NativeMultiHashMap<int, PosRot> boidNeighbours;
@@ -27,6 +26,10 @@ public class BoidECS : JobComponentSystem
     public static float CohesionWeight = 1;
     public static float fleeWeight = 1;
     public static float fleeDistance = 1;
+    public static float cellSize = 10;
+    public static float gridSize = 2000;
+    public static float boidMass = 1;
+    public static float boidDamping = 1;
 
     public BufferFromEntity<PosRot> buffer;
     protected override void OnCreateManager()
@@ -76,8 +79,6 @@ public class BoidECS : JobComponentSystem
         {
             maxNeighbours = maxNeighbours,
             cellMap = cellMap,
-            cellSize = cellSize,
-            gridSize = gridSize,
             maxNeighbourDist = maxNeighbourDist,
             neighbourBuffer = GetBufferFromEntity<PosRot>(false)
         }.Schedule(this, cellJob);
@@ -123,10 +124,14 @@ public class BoidECS : JobComponentSystem
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
             deltaTime = Time.deltaTime,
-            cellMap = cellMap
+            boidDamping = boidDamping,
+            boidMass = boidMass
         }.Schedule(this, fleeJob);
-        
 
+        var miscJob = new MiscJob()
+        {
+            cellMap = cellMap
+        }.Schedule(boidJob);
 
         //var projectileJob = new ProjectileSpawnJob
         //{
@@ -137,7 +142,7 @@ public class BoidECS : JobComponentSystem
 
         var destroyJob = new DestroyJob()
         {
-        }.Schedule(boidJob);
+        }.Schedule(miscJob);
 
         //updatePosJob.Complete();
         cellJob.Complete();
@@ -148,6 +153,7 @@ public class BoidECS : JobComponentSystem
         allignJob.Complete();
         fleeJob.Complete();
         boidJob.Complete();
+        miscJob.Complete();
         destroyJob.Complete();
 
         
@@ -159,56 +165,44 @@ public class BoidECS : JobComponentSystem
     {
         [ReadOnly] public EntityCommandBuffer cmdBuffer;
         public float deltaTime;
+        public float boidMass;
+        public float boidDamping;
         //public Translation targetPos;
 
         //[NativeDisableParallelForRestriction]
         //public NativeHashMap<int, ProjectileData> hashMap;
 
-        [NativeDisableParallelForRestriction]
-        public NativeMultiHashMap<int, NeighbourData> cellMap;
+        //[NativeDisableParallelForRestriction]
+        //public NativeMultiHashMap<int, NeighbourData> cellMap;
 
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            if (!data.inRange)
-            {
-                Vector3 force = data.force;
-                force.Normalize();
-                data.force = force;
+            Vector3 force = data.force;
+            force.Normalize();
+            //data.force = force;
                 
-                trans.Value += data.force;
-                rot.Value = Quaternion.LookRotation(data.force);
-                data.force = Vector3.zero;
-            }
-            else
-            {
-                //hashMap.TryAdd(hashMap.Length , new ProjectileData
-                //{
-                //    speed = 2.0f,
-                //    target = enemyData.force,
-                //    startingPos = trans.Value
-                //});
-            }
+            trans.Value += (float3)force;
+            rot.Value = Quaternion.LookRotation(force);
+            
 
-            var temp = data.force / data.mass;
-            data.acceleration = Vector3.Lerp(data.acceleration, temp, deltaTime);
-            data.velocity += data.acceleration * deltaTime;
-
-            data.velocity = Vector3.ClampMagnitude(data.velocity, data.maxSpeed);
-            var speed = ((Vector3)data.velocity).magnitude;
+            float3 acceleration = force / boidMass;
+            float3 velocity = acceleration * deltaTime;
+            var speed = ((Vector3)velocity).magnitude;
 
             if (speed > 0)
             {
-                data.velocity *= (1.0f - (data.damping * deltaTime));
+                velocity *= (1.0f - (boidDamping * deltaTime));
             }
+            data.acceleration = acceleration;
+            data.velocity += velocity;
+            data.force = Vector3.zero;
 
-            cellMap.Clear();
 
 
             if (data.shouldDestroy && entity != null)
             {
                 cmdBuffer.DestroyEntity(entity);
             }
-            //hashMap.Clear();
         }
     }
 
@@ -429,8 +423,8 @@ public class BoidECS : JobComponentSystem
         public NativeMultiHashMap<int, NeighbourData> cellMap;
 
         public int maxNeighbours;
-        public int cellSize;
-        public int gridSize;
+        //public int cellSize;
+        //public int gridSize;
         public float maxNeighbourDist;
 
         [NativeDisableParallelForRestriction]
@@ -468,24 +462,23 @@ public class BoidECS : JobComponentSystem
         [NativeDisableParallelForRestriction]
         public NativeMultiHashMap<int, NeighbourData>.Concurrent cellMap;
 
-        public int cellSize;
-        public int gridSize;
+        public float cellSize;
+        public float gridSize;
 
-        
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
             //return;
             var pos = trans.Value;
             var cell = ((int)(pos.x / cellSize))
                 + ((int)(pos.z / cellSize)) * gridSize;
-            cellMap.Add(cell, new NeighbourData
+            cellMap.Add((int)cell, new NeighbourData
             {
                 boidIndex = data.index,
                 pos = trans.Value,
                 rot = rot.Value
             });
             
-            data.cell = cell;
+            data.cell = (int)cell;
 
         }
     }
@@ -518,6 +511,15 @@ public class BoidECS : JobComponentSystem
         }
     }
 
+    [BurstCompile]
+    private struct MiscJob : IJob
+    {
+        public NativeMultiHashMap<int, NeighbourData> cellMap;
+        public void Execute()
+        {
+            cellMap.Clear();
+        }
+    }
     [BurstCompile]
     private struct DestroyJob : IJob
     {
