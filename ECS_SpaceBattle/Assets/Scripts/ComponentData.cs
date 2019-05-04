@@ -53,8 +53,14 @@ public struct NeighbourData
 {
     public int boidIndex;
     public Vector3 pos;
+    public Quaternion rot;
 }
 
+public struct PosRot
+{
+    public Vector3 pos;
+    public Quaternion rot;
+}
 
 
 public struct TargetSpawnData : IComponentData
