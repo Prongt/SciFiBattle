@@ -56,10 +56,15 @@ public struct NeighbourData
     public Quaternion rot;
 }
 
-public struct PosRot
+public struct PosRot : IBufferElementData
 {
     public Vector3 pos;
     public Quaternion rot;
+}
+
+public struct EntityData : IBufferElementData
+{
+    public Entity entity;
 }
 
 

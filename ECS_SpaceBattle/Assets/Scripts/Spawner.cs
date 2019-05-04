@@ -58,7 +58,7 @@ public class Spawner : JobComponentSystem
                     i++;
                     CommandBuffer.AddComponent(instance, enemyData);
 
-
+                    CommandBuffer.AddBuffer<PosRot>(instance);
 
                     #region PhysicsStuffNotImplemented
                     //CommandBuffer.AddComponent(instance, new PhysicsCollider());

@@ -52,6 +52,8 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
         };
         dstManager.AddComponentData(entity, eData);
 
+        dstManager.AddBuffer<PosRot>(entity);
+
         //BoidECS.projectileEntity = entity;
 
         #region PhysicsStuffNotImplemented
