@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6230fd97e3c8cd94aa74966cb7ba1ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ArriveWeight: 1
+  ArriveWeight: 20
   AllignmentWeight: 1
   SeperationWeight: 1
   CohesionWeight: 1
