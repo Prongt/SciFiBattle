@@ -13,6 +13,7 @@ public class ValueAdjuster : MonoBehaviour
     [Range(1, 10000)] public float gridSize = 2000;
     [Range(1, 100)] public float boidMass = 1;
     [Range(1, 100)] public float boidDamping = 1;
+    [Range(0, 100)] public float boidMaxSpeed = 1;
     public Transform target;
 
     private void Awake()
@@ -31,5 +32,6 @@ public class ValueAdjuster : MonoBehaviour
         BoidECS.gridSize = gridSize;
         BoidECS.boidMass = boidMass;
         BoidECS.boidDamping = boidDamping;
+        BoidECS.boidMaxSpeed = boidMaxSpeed;
     }
 }

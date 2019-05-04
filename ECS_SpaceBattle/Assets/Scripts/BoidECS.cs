@@ -30,6 +30,7 @@ public class BoidECS : JobComponentSystem
     public static float gridSize = 2000;
     public static float boidMass = 1;
     public static float boidDamping = 1;
+    public static float boidMaxSpeed;
 
     public BufferFromEntity<PosRot> buffer;
     protected override void OnCreateManager()
@@ -125,7 +126,8 @@ public class BoidECS : JobComponentSystem
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
             deltaTime = Time.deltaTime,
             boidDamping = boidDamping,
-            boidMass = boidMass
+            boidMass = boidMass,
+            boidMaxSpeed = boidMaxSpeed
         }.Schedule(this, fleeJob);
 
         var miscJob = new MiscJob()
@@ -167,6 +169,7 @@ public class BoidECS : JobComponentSystem
         public float deltaTime;
         public float boidMass;
         public float boidDamping;
+        public float boidMaxSpeed;
         //public Translation targetPos;
 
         //[NativeDisableParallelForRestriction]
@@ -181,13 +184,14 @@ public class BoidECS : JobComponentSystem
             force.Normalize();
             //data.force = force;
                 
-            trans.Value += (float3)force;
+            trans.Value += (float3)force * boidMaxSpeed;
             rot.Value = Quaternion.LookRotation(force);
             
 
             float3 acceleration = force / boidMass;
             float3 velocity = acceleration * deltaTime;
             var speed = ((Vector3)velocity).magnitude;
+            velocity = math.max(speed, boidMaxSpeed);
 
             if (speed > 0)
             {
