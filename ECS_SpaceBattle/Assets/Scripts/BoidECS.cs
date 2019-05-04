@@ -316,14 +316,14 @@ public class BoidECS : JobComponentSystem
             var dir = targetPos.Value - trans.Value;
             var distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
 
-            if (distance <= data.attackRange)
-            {
-                //data.inRange = true;
-                //data.shouldDestroy = true;               
-                //In Range of target
-            }
-            else
-            {
+            //if (distance <= data.attackRange)
+            //{
+            //    data.inRange = true;
+            //    //data.shouldDestroy = true;               
+            //    //In Range of target
+            //}
+            //else
+            //{
                 var ramped = moveSpeed * (distance / slowingDist);
                 var clamped = Mathf.Min(ramped, moveSpeed);
                 var desired = clamped * (dir / distance);
@@ -332,7 +332,7 @@ public class BoidECS : JobComponentSystem
                 float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
                 data.force = outForce;
                 data.inRange = false;
-            }
+            //}
         }
     }
 
