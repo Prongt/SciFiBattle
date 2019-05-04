@@ -12,7 +12,7 @@ public class BoidECS : JobComponentSystem
 
     //public NativeHashMap<int, ProjectileData> projectileHashMap;
 
-    public int maxNeighbours = 10;
+    public int maxNeighbours = 20;
     public int cellSize = 10;
     public int gridSize = 2000;
     public int maxNeighbourDist = 10;
@@ -25,6 +25,8 @@ public class BoidECS : JobComponentSystem
     public static float AllignmentWeight = 1;
     public static float SeperationWeight = 1;
     public static float CohesionWeight = 1;
+    public static float fleeWeight = 1;
+    public static float fleeDistance = 1;
 
 
     protected override void OnCreateManager()
@@ -81,7 +83,6 @@ public class BoidECS : JobComponentSystem
         {
             deltaTime = Time.deltaTime,
             targetPos = new Translation() { Value = targetPos },
-            targetRot = new Rotation(),
             weight = ArriveWeight
         }.Schedule(this, neighbourJob);
 
@@ -108,16 +109,15 @@ public class BoidECS : JobComponentSystem
         var fleeJob = new FleeJob
         {
             targetPos = new Translation() { Value = targetPos },
-            targetRot = new Rotation()
+            weight = fleeWeight,
+            fleeDist = fleeDistance
         }.Schedule(this, allignJob);
         
 
         var boidJob = new BoidJob()
         {
             cmdBuffer = World.Active.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer(),
-            deltaTime = Time.deltaTime,
-            targetPos = new Translation() { Value = targetPos }
-            //hashMap = boidNeighbours
+            deltaTime = Time.deltaTime
         }.Schedule(this, fleeJob);
         
 
@@ -152,7 +152,7 @@ public class BoidECS : JobComponentSystem
     {
         [ReadOnly] public EntityCommandBuffer cmdBuffer;
         public float deltaTime;
-        public Translation targetPos;
+        //public Translation targetPos;
 
         //[NativeDisableParallelForRestriction]
         //public NativeHashMap<int, ProjectileData> hashMap;
@@ -182,17 +182,17 @@ public class BoidECS : JobComponentSystem
                 //});
             }
 
-            //var temp = enemyData.force / enemyData.mass;
-            //enemyData.acceleration = Vector3.Lerp(enemyData.acceleration, temp, deltaTime);
-            //enemyData.velocity += enemyData.acceleration * deltaTime;
+            var temp = data.force / data.mass;
+            data.acceleration = Vector3.Lerp(data.acceleration, temp, deltaTime);
+            data.velocity += data.acceleration * deltaTime;
 
-            //enemyData.velocity = Vector3.ClampMagnitude(enemyData.velocity, enemyData.maxSpeed);
-            //var speed = ((Vector3)enemyData.velocity).magnitude;
+            data.velocity = Vector3.ClampMagnitude(data.velocity, data.maxSpeed);
+            var speed = ((Vector3)data.velocity).magnitude;
 
-            //if (speed > 0)
-            //{
-            //    enemyData.velocity *= (1.0f - (enemyData.damping * deltaTime));
-            //}
+            if (speed > 0)
+            {
+                data.velocity *= (1.0f - (data.damping * deltaTime));
+            }
 
 
 
@@ -341,21 +341,26 @@ public class BoidECS : JobComponentSystem
     {
         public Translation targetPos;
         public Rotation targetRot;
-        public void Execute(Entity entity, int index, ref EnemyData enemyData, ref Translation trans, ref Rotation rot)
+        public float weight;
+        public float fleeDist;
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            return;
+            //return;
 
             var desired = targetPos.Value - trans.Value;
-            if (((Vector3)desired).magnitude <= enemyData.fleeDistance)
+            if (((Vector3)desired).magnitude <= fleeDistance)
             {
                 ((Vector3)desired).Normalize();
-                desired *= enemyData.maxSpeed;
-                enemyData.force += enemyData.velocity - desired;
-                enemyData.fleeing = true;
+                desired *= data.velocity - data.maxSpeed;
+                var force = desired;
+                float3 outForce = ((Vector3)data.force + ((Vector3)force * weight)).normalized;
+                data.force = outForce;
+                
+                data.fleeing = true;
             }
             else
             {
-                enemyData.fleeing = false;
+                data.fleeing = false;
             }
         }
     }

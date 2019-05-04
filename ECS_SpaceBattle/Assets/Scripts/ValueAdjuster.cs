@@ -8,6 +8,7 @@ public class ValueAdjuster : MonoBehaviour
     [Range(1, 20)] public float AllignmentWeight = 1;
     [Range(1, 20)] public float SeperationWeight = 1;
     [Range(1, 20)] public float CohesionWeight = 1;
+    [Range(1, 20)] public float fleeWeight = 1;
 
     public Transform target;
 
@@ -21,6 +22,7 @@ public class ValueAdjuster : MonoBehaviour
         BoidECS.ArriveWeight = ArriveWeight;
         BoidECS.CohesionWeight = CohesionWeight;
         BoidECS.SeperationWeight = SeperationWeight;
+        BoidECS.fleeWeight = fleeWeight;
         BoidECS.targetPos = target.position;
     }
 }
