@@ -102,7 +102,7 @@ public class BoidECS : JobComponentSystem
         {
             deltaTime = Time.deltaTime,
             targetPos = targetPos,
-            weight = 10,
+            weight = arrive,
             stopRange = stopRange,
             slowingDist = slowingDistance,
             moveSpeed = boidMaxSpeed

@@ -17,6 +17,7 @@ public struct TargetData : IComponentData
 {
     public float movementSpeed;
     public float slowingDistance;
+    public float3 force;
 }
 
 
