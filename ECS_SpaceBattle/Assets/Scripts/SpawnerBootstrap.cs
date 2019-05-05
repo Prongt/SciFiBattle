@@ -34,16 +34,9 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
 
         var eData = new EnemyData
         {
-            movementSpeed = enemyData.movementSpeed,
-            slowingDistance = enemyData.slowingDistance,
-            maxNeighbourDist = enemyData.maxNeighbourDist,
-            attackRange = enemyData.attackRange,
-            fleeDistance = enemyData.fleeDistance,
-            maxSpeed = enemyData.maxSpeed,
             force = enemyData.force,
             acceleration = enemyData.acceleration,
             velocity = enemyData.velocity,
-            mass = enemyData.mass,
             shouldDestroy = false,
             rotation = enemyData.rotation,
             inRange = false,
@@ -53,6 +46,7 @@ public class SpawnerBootstrap : MonoBehaviour, IDeclareReferencedPrefabs, IConve
         dstManager.AddComponentData(entity, eData);
 
         dstManager.AddBuffer<PosRot>(entity);
+        dstManager.AddBuffer<Force>(entity);
 
         //BoidECS.projectileEntity = entity;
 

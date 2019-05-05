@@ -23,17 +23,14 @@ public struct TargetData : IComponentData
 [Serializable]
 public struct EnemyData : IComponentData
 {
-    public float movementSpeed;
-    public float slowingDistance;
-    public float maxNeighbourDist;
-    public float attackRange;
-    public float fleeDistance;
-    public float maxSpeed;
-    public float damping;
     public float3 force;
     public float3 acceleration;
     public float3 velocity;
-    public float mass;
+    public float3 allignForce;
+    public float3 seperationForce;
+    public float3 cohesionForce;
+    public float3 arriveForce;
+    public float3 fleeForce;
     public Quaternion rotation;
     public bool shouldDestroy;
     public bool inRange;
@@ -60,6 +57,18 @@ public struct PosRot : IBufferElementData
 {
     public Vector3 pos;
     public Quaternion rot;
+}
+
+public struct Force : IBufferElementData
+{
+    public float3 force;
+    public float3 allignForce;
+    public float3 seperationForce;
+    public float3 cohesionForce;
+    public float3 arriveForce;
+    public float3 fleeForce;
+    public float3 velocity;
+    public float3 acceleration;
 }
 
 public struct EntityData : IBufferElementData
@@ -101,11 +110,11 @@ public class ComponentData : MonoBehaviour
 
     private void Update()
     {
-        BoidECS.targetPos = target.transform.position;
+        //BoidECS.targetPos = target.transform.position;
     }
     private void Awake()
     {
-        BoidECS.targetPos = target.transform.position;
+        //BoidECS.targetPos = target.transform.position;
 
         //renderMesh = mesh;
         //projectileSpawnData = spawnData;

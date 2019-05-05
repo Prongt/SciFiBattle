@@ -163,11 +163,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6230fd97e3c8cd94aa74966cb7ba1ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ArriveWeight: 20
+  ArriveWeight: 3
   AllignmentWeight: 1
   SeperationWeight: 1
   CohesionWeight: 1
   fleeWeight: 1
+  cellSize: 10
+  gridSize: 2000
+  boidMass: 10
+  boidDamping: 0.5
+  boidMaxSpeed: 1
+  boidBanking: 1
+  boidWeight: 1
+  moveSpeed: 20
+  slowingDistance: 10
+  stopRange: 1
+  maxForce: 100
+  maxNeighbourDist: 10
   target: {fileID: 1892527994}
 --- !u!1 &564158331
 GameObject:
@@ -266,13 +278,6 @@ MonoBehaviour:
     countX: 50
     countY: 50
   enemyData:
-    movementSpeed: 1
-    slowingDistance: 2
-    maxNeighbourDist: 10
-    attackRange: 5
-    fleeDistance: 2
-    maxSpeed: 0
-    damping: 0
     force:
       x: 0
       y: 0
@@ -285,7 +290,26 @@ MonoBehaviour:
       x: 0
       y: 0
       z: 0
-    mass: 0
+    allignForce:
+      x: 0
+      y: 0
+      z: 0
+    seperationForce:
+      x: 0
+      y: 0
+      z: 0
+    cohesionForce:
+      x: 0
+      y: 0
+      z: 0
+    arriveForce:
+      x: 0
+      y: 0
+      z: 0
+    fleeForce:
+      x: 0
+      y: 0
+      z: 0
     rotation: {x: 0, y: 0, z: 0, w: 0}
     shouldDestroy: 0
     inRange: 0

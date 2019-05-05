@@ -8,18 +8,19 @@ using UnityEngine;
 
 public class BoidECS : JobComponentSystem
 {
-    public static Vector3 targetPos;
+    public static Translation targetPos;
 
     //public NativeHashMap<int, ProjectileData> projectileHashMap;
 
     public int maxNeighbours = 20;
     
-    public int maxNeighbourDist = 10;
+    
     public NativeHashMap<int, PosRot> boidPositions;
     public NativeMultiHashMap<int, PosRot> boidNeighbours;
 
     public NativeMultiHashMap<int, NeighbourData> cellMap;
 
+    public static float maxNeighbourDist = 10;
     public static float ArriveWeight = 1;
     public static float AllignmentWeight = 1;
     public static float SeperationWeight = 1;
@@ -30,9 +31,16 @@ public class BoidECS : JobComponentSystem
     public static float gridSize = 2000;
     public static float boidMass = 1;
     public static float boidDamping = 1;
-    public static float boidMaxSpeed;
+    public static float boidMaxSpeed = 10;
+    public static float boidBanking = 1;
+    public static float boidWeight = 1;
+    public static float moveSpeed = 10;
+    public static float slowingDistance = 1;
+    public static float stopRange = 1;
+    public static float maxForce = 10;
 
-    public BufferFromEntity<PosRot> buffer;
+    public BufferFromEntity<PosRot> posRotBuffer;
+    public BufferFromEntity<Force> forceBuffer;
     protected override void OnCreateManager()
     {
         //projectileHashMap = new NativeHashMap<int, ProjectileData>(100000, Allocator.Persistent);
@@ -41,7 +49,7 @@ public class BoidECS : JobComponentSystem
         boidNeighbours = new NativeMultiHashMap<int, PosRot>(2500 * maxNeighbours, Allocator.Persistent);
         cellMap = new NativeMultiHashMap<int, NeighbourData>(2500 * maxNeighbours, Allocator.Persistent);
 
-        buffer = GetBufferFromEntity<PosRot>(false);
+        posRotBuffer = GetBufferFromEntity<PosRot>(false);
 
         
 
@@ -60,7 +68,11 @@ public class BoidECS : JobComponentSystem
 
     protected override JobHandle OnUpdate(JobHandle handle)
     {
-
+        var allign = AllignmentWeight;
+        var cohesion = CohesionWeight;
+        var arrive = ArriveWeight;
+        var seperation = SeperationWeight;
+        var weight = boidWeight;
         
         //var updatePosJob = new UpdatePostitionsJob
         //{
@@ -88,37 +100,49 @@ public class BoidECS : JobComponentSystem
         var arriveJob = new ArriveJob
         {
             deltaTime = Time.deltaTime,
-            targetPos = new Translation() { Value = targetPos },
-            weight = ArriveWeight
+            targetPos = targetPos,
+            weight = 10,
+            stopRange = stopRange,
+            slowingDist = slowingDistance,
+            moveSpeed = boidMaxSpeed
             
         }.Schedule(this, neighbourJob);
 
         var seperationJob = new SeperationJob
         {
             maxNeighbours = maxNeighbours,
-            weight = SeperationWeight,
+            weight = seperation,
             neighbourBuffer = GetBufferFromEntity<PosRot>(true)
         }.Schedule(this, arriveJob);
 
         var cohesionJob = new CohesionJob
         {
             maxNeighbours = maxNeighbours,
-            weight = CohesionWeight,
-            neighbourBuffer = GetBufferFromEntity<PosRot>(true)
+            weight = cohesion,
+            neighbourBuffer = GetBufferFromEntity<PosRot>(true),
+            maxSpeed = boidMaxSpeed
         }.Schedule(this, seperationJob);
 
         var allignJob = new AllignmentJob
         {
-            weight = AllignmentWeight,
+            weight = allign,
             neighbourBuffer = GetBufferFromEntity<PosRot>(true)
         }.Schedule(this, cohesionJob);
 
         var fleeJob = new FleeJob
         {
-            targetPos = new Translation() { Value = targetPos },
+            targetPos = targetPos,
             weight = fleeWeight,
-            fleeDist = fleeDistance
+            fleeDist = fleeDistance,
+            maxSpeed = boidMaxSpeed
         }.Schedule(this, allignJob);
+
+        var constrainJob = new ConstrainJob
+        {
+            weight = 10,
+            targetPos = targetPos,
+            constrainDistance = 300
+        }.Schedule(this, fleeJob);
 
 
         var boidJob = new BoidJob()
@@ -127,8 +151,11 @@ public class BoidECS : JobComponentSystem
             deltaTime = Time.deltaTime,
             boidDamping = boidDamping,
             boidMass = boidMass,
-            boidMaxSpeed = boidMaxSpeed
-        }.Schedule(this, fleeJob);
+            boidMaxSpeed = boidMaxSpeed,
+            banking = boidBanking,
+            weight = weight,
+            maxForce = maxForce
+        }.Schedule(this, constrainJob);
 
         var miscJob = new MiscJob()
         {
@@ -154,6 +181,7 @@ public class BoidECS : JobComponentSystem
         cohesionJob.Complete();
         allignJob.Complete();
         fleeJob.Complete();
+        constrainJob.Complete();
         boidJob.Complete();
         miscJob.Complete();
         destroyJob.Complete();
@@ -170,6 +198,9 @@ public class BoidECS : JobComponentSystem
         public float boidMass;
         public float boidDamping;
         public float boidMaxSpeed;
+        public float weight;
+        public float banking;
+        public float maxForce;
         //public Translation targetPos;
 
         //[NativeDisableParallelForRestriction]
@@ -180,25 +211,43 @@ public class BoidECS : JobComponentSystem
 
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            Vector3 force = data.force;
-            force.Normalize();
-            //data.force = force;
+            //Vector3 force = data.force * weight;
+            //force.Normalize();
                 
-            trans.Value += (float3)force * boidMaxSpeed;
-            rot.Value = Quaternion.LookRotation(force);
             
+            //float3 velocity = new float3();
 
-            float3 acceleration = force / boidMass;
-            float3 velocity = acceleration * deltaTime;
-            var speed = ((Vector3)velocity).magnitude;
-            velocity = math.max(speed, boidMaxSpeed);
+            float3 newAcceleration = (data.force * weight) / boidMass;
+            data.acceleration = math.lerp(data.acceleration, newAcceleration, deltaTime);
+            data.velocity += data.acceleration * deltaTime;
 
-            if (speed > 0)
+
+
+            data.velocity = Vector3.ClampMagnitude(data.velocity * weight, boidMaxSpeed);
+            //var speed = ((Vector3)data.velocity).magnitude;
+
+
+            if (((Vector3)data.velocity).magnitude > float.Epsilon)
             {
-                velocity *= (1.0f - (boidDamping * deltaTime));
+                //Quaternion r = rot.Value;
+                //var upVec = r.eulerAngles * (float3)Vector3.up;
+
+                //Vector3 tempUp = Vector3.Lerp(upVec, ((float3)Vector3.up * 5) + (acceleration * banking), deltaTime * 3.0f);
+                //rot.Value = Quaternion.LookRotation(velocity, tempUp);
+
+
+                trans.Value += data.velocity * deltaTime;
+                data.velocity *= (1.0f - (boidDamping * deltaTime));
             }
-            data.acceleration = acceleration;
-            data.velocity += velocity;
+            //var pos = math.lerp(trans.Value, (float3)force + trans.Value, deltaTime);
+            //trans.Value += (float3)force * deltaTime;
+            //trans.Value += pos;
+            var r = math.slerp(rot.Value, Quaternion.LookRotation(data.velocity), deltaTime);
+            //rot.Value = Quaternion.LookRotation(force);
+            rot.Value = r;
+
+            //data.acceleration = newAcceleration;
+            //data.velocity = data.velocity;
             data.force = Vector3.zero;
 
 
@@ -207,6 +256,46 @@ public class BoidECS : JobComponentSystem
             {
                 cmdBuffer.DestroyEntity(entity);
             }
+        }
+
+        public float3 CombineForces(ref EnemyData data)
+        {
+            Vector3 force = Vector3.zero;
+            force += (Vector3)data.arriveForce;
+            if (force.magnitude >= maxForce)
+            {
+                force = Vector3.ClampMagnitude(force, maxForce);
+                return force;
+            }
+
+            force += (Vector3)data.allignForce;
+            if (force.magnitude >= maxForce)
+            {
+                force = Vector3.ClampMagnitude(force, maxForce);
+                return force;
+            }
+
+            force += (Vector3)data.cohesionForce;
+            if (force.magnitude >= maxForce)
+            {
+                force = Vector3.ClampMagnitude(force, maxForce);
+                return force;
+            }
+
+            force += (Vector3)data.seperationForce;
+            if (force.magnitude >= maxForce)
+            {
+                force = Vector3.ClampMagnitude(force, maxForce);
+                return force;
+            }
+
+            force += (Vector3)data.fleeForce;
+            if (force.magnitude >= maxForce)
+            {
+                force = Vector3.ClampMagnitude(force, maxForce);
+                return force;
+            }
+            return force;
         }
     }
 
@@ -221,8 +310,12 @@ public class BoidECS : JobComponentSystem
 
         [NativeDisableParallelForRestriction]
         [ReadOnly] public BufferFromEntity<PosRot> neighbourBuffer;
+
+        //[NativeDisableParallelForRestriction]
+        //[ReadOnly] public BufferFromEntity<Force> forceBuffer;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation c2)
         {
+            return;
             var force = (float3)Vector3.zero;
             //if (neighbourMap.TryGetFirstValue(data.index, out PosRot vec, out NativeMultiHashMapIterator<int> it))
             //{
@@ -238,8 +331,10 @@ public class BoidECS : JobComponentSystem
                 var desired = (Vector3)trans.Value - neighbours[i].pos;
                 force += (float3)(Vector3.Normalize(desired) / desired.magnitude);
             }
-            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
-            data.force = outForce;
+            //float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
+            Vector3 outForce = (Vector3)force * weight;
+            data.force += (float3)outForce.normalized;
+            //trans.Value += (float3)outForce.normalized;
         }
     }
 
@@ -251,15 +346,15 @@ public class BoidECS : JobComponentSystem
 
         public int maxNeighbours;
         public float weight;
+        public float maxSpeed;
 
         [NativeDisableParallelForRestriction]
         [ReadOnly] public BufferFromEntity<PosRot> neighbourBuffer;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation c2)
         {
+            return;
             var centerOfMass = (float3)Vector3.zero;
             
-
-            var count = 0;
             var force = (float3)Vector3.zero;
             //if (neighbourMap.TryGetFirstValue(data.index, out PosRot vec, out NativeMultiHashMapIterator<int> it))
             //{
@@ -274,22 +369,24 @@ public class BoidECS : JobComponentSystem
             for (int i = 0; i < neighbours.Length; i++)
             {
                 centerOfMass += (float3)neighbours[i].pos;
-                count++;
             }
 
-            if (count > 0)
+            if (neighbours.Length > 0)
             {
-                centerOfMass /= count;
+                centerOfMass /= neighbours.Length;
                 
                 var toTarget = (Vector3)(centerOfMass - trans.Value);
-                var desired =  toTarget.normalized * data.maxSpeed;
+                var desired =  toTarget.normalized * maxSpeed;
                 force = (desired - (Vector3)data.velocity).normalized;
             }
 
 
 
-            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
-            data.force = outForce;
+            //float3 outForce = (Vector3)force * weight;
+            //data.force += outForce;
+            Vector3 outForce = (Vector3)force * weight;
+            data.force += (float3)outForce.normalized;
+            //trans.Value += (float3)outForce.normalized;
         }
     }
 
@@ -307,9 +404,10 @@ public class BoidECS : JobComponentSystem
         [ReadOnly] public BufferFromEntity<PosRot> neighbourBuffer;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
+            return;
             Vector3 desired = Vector3.zero;
             Vector3 force = Vector3.zero;
-            var count = 0;
+            
 
             //if (neighbourMap.TryGetFirstValue(data.index, out PosRot vec, out NativeMultiHashMapIterator<int> it))
             //{
@@ -324,17 +422,21 @@ public class BoidECS : JobComponentSystem
             for (int i = 0; i < neighbours.Length; i++)
             {
                 desired += neighbours[i].rot * Vector3.forward;
-                count++;
+                
             }
 
-            if (count > 0)
+            if (neighbours.Length > 0)
             {
-                var r = Quaternion.Euler(rot.Value.value.x, rot.Value.value.y, rot.Value.value.z);
-                desired /= count;
-                force = desired - (r * Vector3.forward);
+                Quaternion r = rot.Value;
+                var vec = r.eulerAngles;
+                desired /= neighbours.Length;
+                force = desired - ((Vector3)(vec * (float3)Vector3.forward));
             }
-            float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
-            data.force = outForce;
+            //float3 outForce = force * weight;
+            //data.force += outForce;
+            Vector3 outForce = (Vector3)force * weight;
+            data.force += (float3)outForce.normalized;
+            //trans.Value += (float3)outForce.normalized;
         }
     }
 
@@ -345,30 +447,56 @@ public class BoidECS : JobComponentSystem
         public Translation targetPos;
         //public Rotation targetRot;
         public float weight;
+        public float moveSpeed;
+        public float slowingDist;
+        public float stopRange;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            var moveSpeed = data.movementSpeed;
-            var slowingDist = data.slowingDistance;
+            //return;
             var dir = targetPos.Value - trans.Value;
             var distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
 
-            //if (distance <= data.attackRange)
-            //{
-            //    data.inRange = true;
-            //    //data.shouldDestroy = true;               
-            //    //In Range of target
-            //}
+            if (distance <= stopRange)
+            {
+                data.inRange = true;
+                //data.shouldDestroy = true;               
+                //In Range of target
+            }
             //else
             //{
-                var ramped = moveSpeed * (distance / slowingDist);
-                var clamped = Mathf.Min(ramped, moveSpeed);
-                var desired = clamped * (dir / distance);
-                var force = desired * deltaTime;
+            var ramped = moveSpeed * (distance / slowingDist);
+            //var clamped = Mathf.Min(ramped, moveSpeed);
+            var clamped = math.min(ramped, moveSpeed);
+            var desired = clamped * (dir / distance);
+            var force = desired * deltaTime;
 
-                float3 outForce = (((Vector3)data.force + ((Vector3)force) * weight));
-                data.force = outForce;
-                data.inRange = false;
+            //float3 outForce = (Vector3)force * weight;
+            //data.force = outForce;
+            Vector3 outForce = (Vector3)force * weight;
+            data.force += (float3)outForce.normalized;
+            //trans.Value += (float3)outForce.normalized;
+            //data.inRange = false;
             //}
+        }
+    }
+
+    [BurstCompile]
+    private struct ConstrainJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
+    {
+        public Translation targetPos;
+        
+        public float weight;
+        public float constrainDistance;
+        public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
+        {
+            return;
+            var force = Vector3.zero;
+            Vector3 toTarget = trans.Value - targetPos.Value;
+            if (toTarget.magnitude > constrainDistance)
+            {
+                force = Vector3.Normalize(toTarget) * (constrainDistance - toTarget.magnitude);
+            }
+            data.force += (float3)force * weight;
         }
     }
 
@@ -379,6 +507,7 @@ public class BoidECS : JobComponentSystem
         //public Rotation targetRot;
         public float weight;
         public float fleeDist;
+        public float maxSpeed;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
             return;
@@ -387,7 +516,7 @@ public class BoidECS : JobComponentSystem
             if (((Vector3)desired).magnitude <= fleeDistance)
             {
                 ((Vector3)desired).Normalize();
-                desired *= data.velocity - data.maxSpeed;
+                desired *= data.velocity - maxSpeed;
                 var force = desired;
                 float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
                 data.force = outForce;
@@ -445,11 +574,14 @@ public class BoidECS : JobComponentSystem
                 {
                     if (nData.boidIndex != data.index)
                     {
-                        neighbourBuffer[entity].Add(new PosRot
+                        if (math.distance(nData.pos, trans.Value) < maxNeighbourDist)
                         {
-                            pos = nData.pos,
-                            rot = nData.rot
-                        });
+                            neighbourBuffer[entity].Add(new PosRot
+                            {
+                                pos = nData.pos,
+                                rot = nData.rot
+                            });
+                        }
                     }    
                 } while (cellMap.TryGetNextValue(out nData, ref iterator));
             }
