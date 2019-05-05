@@ -172,14 +172,15 @@ MonoBehaviour:
   gridSize: 2000
   boidMass: 10
   boidDamping: 0.5
-  boidMaxSpeed: 1
+  boidMaxSpeed: 34.3
   boidBanking: 1
-  boidWeight: 1
+  boidWeight: 18.4
   moveSpeed: 20
   slowingDistance: 10
   stopRange: 1
   maxForce: 100
   maxNeighbourDist: 10
+  constrainWeight: 10
   target: {fileID: 1892527994}
 --- !u!1 &564158331
 GameObject:

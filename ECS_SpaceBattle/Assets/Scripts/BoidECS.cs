@@ -38,6 +38,7 @@ public class BoidECS : JobComponentSystem
     public static float slowingDistance = 1;
     public static float stopRange = 1;
     public static float maxForce = 10;
+    public static float constrainWeight = 1;
 
     public BufferFromEntity<PosRot> posRotBuffer;
     public BufferFromEntity<Force> forceBuffer;
@@ -139,7 +140,7 @@ public class BoidECS : JobComponentSystem
 
         var constrainJob = new ConstrainJob
         {
-            weight = 10,
+            weight = constrainWeight,
             targetPos = targetPos,
             constrainDistance = 300
         }.Schedule(this, fleeJob);
@@ -315,7 +316,7 @@ public class BoidECS : JobComponentSystem
         //[ReadOnly] public BufferFromEntity<Force> forceBuffer;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation c2)
         {
-            return;
+            //return;
             var force = (float3)Vector3.zero;
             //if (neighbourMap.TryGetFirstValue(data.index, out PosRot vec, out NativeMultiHashMapIterator<int> it))
             //{
@@ -331,10 +332,11 @@ public class BoidECS : JobComponentSystem
                 var desired = (Vector3)trans.Value - neighbours[i].pos;
                 force += (float3)(Vector3.Normalize(desired) / desired.magnitude);
             }
-            //float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
-            Vector3 outForce = (Vector3)force * weight;
-            data.force += (float3)outForce.normalized;
-            //trans.Value += (float3)outForce.normalized;
+
+            //Vector3 outForce = (Vector3)force * weight;
+            //data.force += (float3)outForce.normalized;
+            Vector3 outForce = force;
+            data.force += (float3)outForce.normalized * weight;
         }
     }
 
@@ -352,7 +354,7 @@ public class BoidECS : JobComponentSystem
         [ReadOnly] public BufferFromEntity<PosRot> neighbourBuffer;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation c2)
         {
-            return;
+            //return;
             var centerOfMass = (float3)Vector3.zero;
             
             var force = (float3)Vector3.zero;
@@ -382,11 +384,11 @@ public class BoidECS : JobComponentSystem
 
 
 
-            //float3 outForce = (Vector3)force * weight;
-            //data.force += outForce;
-            Vector3 outForce = (Vector3)force * weight;
-            data.force += (float3)outForce.normalized;
-            //trans.Value += (float3)outForce.normalized;
+
+            //Vector3 outForce = (Vector3)force * weight;
+            //data.force += (float3)outForce.normalized;
+            Vector3 outForce = force;
+            data.force += (float3)outForce.normalized * weight;
         }
     }
 
@@ -404,7 +406,7 @@ public class BoidECS : JobComponentSystem
         [ReadOnly] public BufferFromEntity<PosRot> neighbourBuffer;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            return;
+            //return;
             Vector3 desired = Vector3.zero;
             Vector3 force = Vector3.zero;
             
@@ -432,11 +434,11 @@ public class BoidECS : JobComponentSystem
                 desired /= neighbours.Length;
                 force = desired - ((Vector3)(vec * (float3)Vector3.forward));
             }
-            //float3 outForce = force * weight;
-            //data.force += outForce;
-            Vector3 outForce = (Vector3)force * weight;
-            data.force += (float3)outForce.normalized;
-            //trans.Value += (float3)outForce.normalized;
+
+            //Vector3 outForce = (Vector3)force * weight;
+            //data.force += (float3)outForce.normalized;
+            Vector3 outForce = force;
+            data.force += (float3)outForce.normalized * weight;
         }
     }
 
@@ -454,7 +456,7 @@ public class BoidECS : JobComponentSystem
         {
             //return;
             var dir = targetPos.Value - trans.Value;
-            var distance = new Vector3(dir.x, dir.y, dir.z).magnitude;
+            var distance = ((Vector3)dir).magnitude;
 
             if (distance <= stopRange)
             {
@@ -472,8 +474,8 @@ public class BoidECS : JobComponentSystem
 
             //float3 outForce = (Vector3)force * weight;
             //data.force = outForce;
-            Vector3 outForce = (Vector3)force * weight;
-            data.force += (float3)outForce.normalized;
+            Vector3 outForce = force;
+            data.force += (float3)outForce.normalized * weight;
             //trans.Value += (float3)outForce.normalized;
             //data.inRange = false;
             //}
@@ -489,7 +491,7 @@ public class BoidECS : JobComponentSystem
         public float constrainDistance;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            return;
+            //return;
             var force = Vector3.zero;
             Vector3 toTarget = trans.Value - targetPos.Value;
             if (toTarget.magnitude > constrainDistance)

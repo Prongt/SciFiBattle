@@ -22,6 +22,7 @@ public class ValueAdjuster : MonoBehaviour
     [Range(1, 100)] public  float stopRange = 1;
     [Range(1, 100)] public float maxForce = 1;
     [Range(1, 100)] public float maxNeighbourDist = 10;
+    [Range(1, 100)] public float constrainWeight = 1;
     public Transform target;
 
     private void Awake()
@@ -49,5 +50,6 @@ public class ValueAdjuster : MonoBehaviour
         BoidECS.stopRange = stopRange;
         BoidECS.maxForce = maxForce;
         BoidECS.maxNeighbourDist = maxNeighbourDist;
+        BoidECS.constrainWeight = constrainWeight;
     }
 }
