@@ -44,21 +44,21 @@ public class StateController : MonoBehaviour
         
         
         return;
-        cameraController.targetPos = shipPos;
+        //cameraController.targetPos = shipPos;
 
-        if (!cameraController.IsAtTarget)
-        {
-            //cameraController.targetPos = shipPos;
-            //cameraController.tempFollowDistance = cameraController.followDistance;
-        }
-        else
-        {
-            Debug.Log("Camera has arrived");
-            if(ShipController.checkPointArray[0] == false)
-            {
+        //if (!cameraController.IsAtTarget)
+        //{
+        //    //cameraController.targetPos = shipPos;
+        //    //cameraController.tempFollowDistance = cameraController.followDistance;
+        //}
+        //else
+        //{
+        //    Debug.Log("Camera has arrived");
+        //    if(ShipController.checkPointArray[0] == false)
+        //    {
 
-            }
-        }
+        //    }
+        //}
     }
     
 
@@ -73,8 +73,8 @@ public class StateController : MonoBehaviour
         
         while (true)
         {
-            yield return waitForSeconds;
-            cameraController.targetPos = cameraTarget;
+            
+            //cameraController.targetPos = cameraTarget;
 
 
             switch (shotIndex)
@@ -83,55 +83,48 @@ public class StateController : MonoBehaviour
                     cameraTarget = shipPos;
                     shipTargetVector = startingShipTarget.position;
                     boidTargetVector = boidStartingTarget.position;
+                    CameraController.targetPos = cameraTarget;
                     break;
                 case 1:
                     cameraTarget = boidStartingTarget.position;
+                    CameraController.targetPos = cameraTarget;
                     //TODO increase stopping range
                     break;
                 case 2:
                     cameraTarget = shipPos;
                     boidTargetVector = shipPos;
+                    CameraController.targetPos = cameraTarget;
                     break;
                 case 3:
                     cameraTarget = shipPos;
                     boidTargetVector = shipPos;
                     shipTargetVector = planet.position;
+                    CameraController.targetPos = cameraTarget;
+                    break;
+                case 4:
+                    cameraTarget = shipPos;
+                    boidTargetVector = shipPos;
+                    shipTargetVector = planet.position;
+                    CameraController.targetPos = cameraTarget;
                     break;
                 default:
                     //Console.WriteLine("Default case");
                     break;
             }
 
-            //if (!stage1)
-            //{
-            //    cameraTarget = shipPos;
-            //}
-            //else
-            //{
-            //    if (!stage2)
-            //    {
-            //        cameraTarget = boidTarget.position;
-            //    }
-            //}
-            if (!cameraController.IsAtTarget)
+            yield return new WaitForSeconds(2.0f);
+            if (cameraController.CheckAtTarget(cameraTarget))
             {
-                //cameraController.targetPos = shipPos;
-                //cameraController.tempFollowDistance = cameraController.followDistance;
-            }
-            else
-            {
+                //if (ShipController.checkPointArray[0])
                 
+                    
+                //cameraController.IsAtTarget = false;
 
-                yield return new WaitForSeconds(2.0f);
                 
-
-                if (ShipController.checkPointArray[0])
-                {
-                    Debug.Log("Camera has arrived");
-                    shotIndex++;
-                }
+                Debug.Log("Camera has arrived");
+                shotIndex++;
             }
-            
+            yield return waitForSeconds;
         }
     }
     

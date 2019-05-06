@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public Vector3 targetPos;
+    public static Vector3 targetPos;
     public Vector3 offset;
     public float followDistance;
     //[HideInInspector] public float tempFollowDistance;
@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float banking;
     //[SerializeField] private float slowingDistance;
 
-    public bool IsAtTarget;
+    public static bool IsAtTarget = false;
 
     private void Awake()
     {
@@ -35,6 +35,14 @@ public class CameraController : MonoBehaviour
             Debug.Log("Null Target");
             return;
         }
+        //if (math.distance(transform.position, targetPos) < 30)
+        //{
+        //    IsAtTarget = true;
+        //}
+        //else
+        //{
+        //    IsAtTarget = false;
+        //}
 
         force = ArriveForce(targetPos, followDistance);
 
@@ -55,9 +63,9 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public bool CheckAtTarget()
+    public bool CheckAtTarget(Vector3 t)
     {
-        if (math.distance(this.transform.position, targetPos) < followDistance)
+        if (math.distance(this.transform.position, t) < followDistance)
         {
             return true;
         }
@@ -74,11 +82,11 @@ public class CameraController : MonoBehaviour
         float distance = toTarget.magnitude;
         if (distance < slowingDistance)
         {
-            IsAtTarget = true;
+            //IsAtTarget = true;
             return velocity * (1.0f - (damping * Time.deltaTime));
         }
         
-            IsAtTarget = false;
+            //IsAtTarget = false;
         
         float ramped = maxSpeed * (distance / slowingDistance * 2);
 

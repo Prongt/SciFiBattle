@@ -407,9 +407,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTarget: {x: 0, y: 0, z: 0}
+  boidTargetVector: {x: 0, y: 0, z: 0}
+  shipTargetVector: {x: 0, y: 0, z: 0}
   shipPos: {x: 0, y: 0, z: 0}
-  shipTarget: {fileID: 1892527994}
-  boidTarget: {fileID: 1237215466}
+  startingShipTarget: {fileID: 1892527994}
+  boidStartingTarget: {fileID: 1237215466}
+  planet: {fileID: 1608466294}
   cameraController: {fileID: 2110058485}
 --- !u!1 &849718782
 GameObject:
@@ -728,7 +731,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1237215462}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 200, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -868,7 +871,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1608466293}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -959,7 +962,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1892527990}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 600}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1035,7 +1038,7 @@ MonoBehaviour:
     spawnPos:
       x: 0
       y: 0
-      z: 940
+      z: 200
 --- !u!1 &2110058480
 GameObject:
   m_ObjectHideFlags: 0
@@ -1114,7 +1117,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110058480}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 1091.8}
+  m_LocalPosition: {x: 0, y: 0, z: 250}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1132,14 +1135,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f38cc75a335a914b8f240229eed8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPos: {x: 0, y: 0, z: 0}
   offset: {x: 0, y: 5, z: 0}
   followDistance: 30
   maxSpeed: 900
   mass: 1
   damping: 60
   banking: 1
-  IsAtTarget: 0
 --- !u!1001 &1247280222522560932
 PrefabInstance:
   m_ObjectHideFlags: 0
