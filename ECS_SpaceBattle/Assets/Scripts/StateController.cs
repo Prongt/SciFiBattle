@@ -1,32 +1,35 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Unity.Transforms;
 using UnityEngine;
 
 public class StateController : MonoBehaviour
 {
-    //public static Vector3 cameraTarget;
-    //public static Vector3 boidTarget;
-    //public static Vector3 shipTarget;
+    public Vector3 cameraTarget;
+    public Vector3 boidTargetVector;
+    public Vector3 shipTargetVector;
     public Vector3 shipPos;
-    public Transform shipTarget;
-    public Transform boidTarget;
+    public Transform startingShipTarget;
+    public Transform boidStartingTarget;
+    public Transform planet;
 
     WaitForSeconds waitForSeconds;
     bool stage1 = false;
+    bool stage2 = false;
+    bool stage3 = false;
 
+    int shotIndex = 0;
+    bool canChangeShot = false;
     public CameraController cameraController;
     private void Awake()
     {
         waitForSeconds = new WaitForSeconds(0.1f);
 
         shipPos = ShipController.posArray[0];
-        BoidECS.targetPos = new Translation { Value = boidTarget.position };
-        ShipController.targetPos = new Translation { Value = shipTarget.position };
+        BoidECS.targetPos = new Translation { Value = boidTargetVector };
+        ShipController.targetPos = new Translation { Value = shipTargetVector };
         //cameraTarget = shipPos;
-        //StartCoroutine(StateControllerCoroutine());
 
-        cameraController.targetPos = shipPos;
+        //cameraController.targetPos = cameraTarget;
         //cameraController.tempFollowDistance = cameraController.followDistance;
         StartCoroutine(bla());
     }
@@ -34,11 +37,12 @@ public class StateController : MonoBehaviour
     private void Update()
     {
         shipPos = ShipController.posArray[0];
-        BoidECS.targetPos = new Translation { Value = boidTarget.position };
-        ShipController.targetPos = new Translation { Value = shipTarget.position };
+        BoidECS.targetPos = new Translation { Value = boidTargetVector };
+        ShipController.targetPos = new Translation { Value = shipTargetVector };
 
         //cameraTarget = shipPos;
-
+        
+        
         return;
         cameraController.targetPos = shipPos;
 
@@ -70,8 +74,45 @@ public class StateController : MonoBehaviour
         while (true)
         {
             yield return waitForSeconds;
-            cameraController.targetPos = shipPos;
+            cameraController.targetPos = cameraTarget;
 
+
+            switch (shotIndex)
+            {
+                case 0:
+                    cameraTarget = shipPos;
+                    shipTargetVector = startingShipTarget.position;
+                    boidTargetVector = boidStartingTarget.position;
+                    break;
+                case 1:
+                    cameraTarget = boidStartingTarget.position;
+                    //TODO increase stopping range
+                    break;
+                case 2:
+                    cameraTarget = shipPos;
+                    boidTargetVector = shipPos;
+                    break;
+                case 3:
+                    cameraTarget = shipPos;
+                    boidTargetVector = shipPos;
+                    shipTargetVector = planet.position;
+                    break;
+                default:
+                    //Console.WriteLine("Default case");
+                    break;
+            }
+
+            //if (!stage1)
+            //{
+            //    cameraTarget = shipPos;
+            //}
+            //else
+            //{
+            //    if (!stage2)
+            //    {
+            //        cameraTarget = boidTarget.position;
+            //    }
+            //}
             if (!cameraController.IsAtTarget)
             {
                 //cameraController.targetPos = shipPos;
@@ -79,10 +120,15 @@ public class StateController : MonoBehaviour
             }
             else
             {
-                Debug.Log("Camera has arrived");
-                if (ShipController.checkPointArray[0] == false)
-                {
+                
 
+                yield return new WaitForSeconds(2.0f);
+                
+
+                if (ShipController.checkPointArray[0])
+                {
+                    Debug.Log("Camera has arrived");
+                    shotIndex++;
                 }
             }
             
