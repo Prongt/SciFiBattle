@@ -48,7 +48,7 @@ public class Spawner : JobComponentSystem
                 {
                     var instance = CommandBuffer.Instantiate(spawnData.prefab);
                     var position = math.transform(location.Value,
-                        new float3(x * 1.3F, noise.cnoise(new float2(x, y) * 0.21F) * 2, y * 1.3F));
+                        new float3(x + 700 * 1.3F, noise.cnoise(new float2(x + 700, y) * 0.21F) * 2, y * 1.3F));
 
                     CommandBuffer.SetComponent(instance, new Translation { Value = position });
 

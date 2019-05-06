@@ -19,30 +19,19 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float banking;
     //[SerializeField] private float slowingDistance;
 
-    public static bool IsAtTarget = false;
+    //public static bool IsAtTarget = false;
 
     private void Awake()
     {
-        //tempFollowDistance = followDistance;
-        IsAtTarget = false;
+        targetPos = ShipController.posArray[0];
+        //IsAtTarget = false;
     }
     private void Update()
     {
-        //targetPos = ValueAdjuster.cameraTarget;
-        if (targetPos == new Vector3())
+        if (Time.timeSinceLevelLoad < 3f)
         {
-            IsAtTarget = false;
-            Debug.Log("Null Target");
             return;
         }
-        //if (math.distance(transform.position, targetPos) < 30)
-        //{
-        //    IsAtTarget = true;
-        //}
-        //else
-        //{
-        //    IsAtTarget = false;
-        //}
 
         force = ArriveForce(targetPos, followDistance);
 
