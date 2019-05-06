@@ -11,6 +11,8 @@ public class StateController : MonoBehaviour
     public Transform startingShipTarget;
     public Transform boidStartingTarget;
     public Transform planet;
+    public Transform blackHole;
+    
 
     WaitForSeconds waitForSeconds;
     bool stage1 = false;
@@ -110,8 +112,14 @@ public class StateController : MonoBehaviour
                     cameraController.tempFollowDistance = cameraController.followDistance * 2;
                     CameraController.targetPos = cameraTarget;
                     break;
+                case 5:
+                    boidTargetVector = blackHole.position;
+                    BoidECS.BlackHole = true;
+
+                    break;
                 default:
-                    //Console.WriteLine("Default case");
+                    boidTargetVector = blackHole.position;
+                    BoidECS.BlackHole = true;
                     break;
             }
 

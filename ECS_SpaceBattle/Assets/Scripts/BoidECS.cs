@@ -39,6 +39,7 @@ public class BoidECS : JobComponentSystem
     public static float stopRange = 1;
     public static float maxForce = 10;
     public static float constrainWeight = 1;
+    public static bool BlackHole = false;
 
     public BufferFromEntity<PosRot> posRotBuffer;
     public BufferFromEntity<Force> forceBuffer;
@@ -155,7 +156,8 @@ public class BoidECS : JobComponentSystem
             boidMaxSpeed = boidMaxSpeed,
             banking = boidBanking,
             weight = weight,
-            maxForce = maxForce
+            maxForce = maxForce,
+            IsBlackHole = BlackHole
         }.Schedule(this, constrainJob);
 
         var miscJob = new MiscJob()
@@ -202,13 +204,8 @@ public class BoidECS : JobComponentSystem
         public float weight;
         public float banking;
         public float maxForce;
-        //public Translation targetPos;
 
-        //[NativeDisableParallelForRestriction]
-        //public NativeHashMap<int, ProjectileData> hashMap;
-
-        //[NativeDisableParallelForRestriction]
-        //public NativeMultiHashMap<int, NeighbourData> cellMap;
+        public bool IsBlackHole;
 
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
@@ -253,7 +250,7 @@ public class BoidECS : JobComponentSystem
 
 
 
-            if (data.shouldDestroy && entity != null)
+            if (data.inRange && IsBlackHole && entity != null)
             {
                 cmdBuffer.DestroyEntity(entity);
             }
@@ -458,27 +455,24 @@ public class BoidECS : JobComponentSystem
             var dir = targetPos.Value - trans.Value;
             var distance = ((Vector3)dir).magnitude;
 
-            if (distance <= stopRange)
+            if (distance <= slowingDist)
             {
                 data.inRange = true;
-                //data.shouldDestroy = true;               
-                //In Range of target
+
             }
-            //else
-            //{
+            else
+            {
+                data.inRange = false;
+            }
             var ramped = moveSpeed * (distance / slowingDist);
-            //var clamped = Mathf.Min(ramped, moveSpeed);
+
             var clamped = math.min(ramped, moveSpeed);
             var desired = clamped * (dir / distance);
             var force = desired * deltaTime;
 
-            //float3 outForce = (Vector3)force * weight;
-            //data.force = outForce;
             Vector3 outForce = force;
             data.force += (float3)outForce.normalized * weight;
-            //trans.Value += (float3)outForce.normalized;
-            //data.inRange = false;
-            //}
+            
         }
     }
 

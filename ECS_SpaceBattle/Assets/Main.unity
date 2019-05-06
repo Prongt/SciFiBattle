@@ -413,6 +413,7 @@ MonoBehaviour:
   startingShipTarget: {fileID: 1892527994}
   boidStartingTarget: {fileID: 1237215466}
   planet: {fileID: 1608466294}
+  blackHole: {fileID: 1167985708}
   cameraController: {fileID: 2110058485}
 --- !u!1 &849718782
 GameObject:
@@ -640,6 +641,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshesToCombine: {fileID: 0}
+--- !u!1 &1167985707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1167985708}
+  m_Layer: 0
+  m_Name: BlackHole
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1167985708
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167985707}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -800}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1193224943 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4448943862007356060, guid: 8989a7dde0860144a9aa06594152d158,
