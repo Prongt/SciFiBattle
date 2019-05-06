@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour
     public Vector3 targetPos;
     public Vector3 offset;
     public float followDistance;
+    //[HideInInspector] public float tempFollowDistance;
     public float maxSpeed;
     private Vector3 velocity;
     private Vector3 acceleration;
@@ -16,23 +17,26 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float mass;
     [SerializeField] private float damping;
     [SerializeField] private float banking;
-    [SerializeField] private float slowingDistance;
+    //[SerializeField] private float slowingDistance;
+
+    public bool IsAtTarget;
+
+    private void Awake()
+    {
+        //tempFollowDistance = followDistance;
+        IsAtTarget = false;
+    }
     private void Update()
     {
-        targetPos = ValueAdjuster.cameraTarget;
-        if (targetPos == null)
+        //targetPos = ValueAdjuster.cameraTarget;
+        if (targetPos == new Vector3())
         {
+            IsAtTarget = false;
+            Debug.Log("Null Target");
             return;
         }
-        //var pos = (transform.position - targetPos) * followDistance;
-        //transform.position = pos * Time.deltaTime;
 
-        //var startPos = transform.position;
-
-
-        //transform.LookAt(targetPos);
-        //targetPos += offset;
-        force = ArriveForce(targetPos, slowingDistance);
+        force = ArriveForce(targetPos, followDistance);
 
         Vector3 newAcceleration = force / mass;
         acceleration = Vector3.Lerp(acceleration, newAcceleration, Time.deltaTime);
@@ -51,16 +55,32 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    public bool CheckAtTarget()
+    {
+        if (math.distance(this.transform.position, targetPos) < followDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public Vector3 ArriveForce(Vector3 target, float slowingDistance = 15.0f)
     {
         Vector3 toTarget = (target + offset) - transform.position;
 
         float distance = toTarget.magnitude;
-        if (distance < followDistance)
+        if (distance < slowingDistance)
         {
+            IsAtTarget = true;
             return velocity * (1.0f - (damping * Time.deltaTime));
         }
-        float ramped = maxSpeed * (distance / slowingDistance);
+        
+            IsAtTarget = false;
+        
+        float ramped = maxSpeed * (distance / slowingDistance * 2);
 
         float clamped = Mathf.Min(ramped, maxSpeed);
         Vector3 desired = clamped * (toTarget / distance);

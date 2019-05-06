@@ -12,17 +12,20 @@ public class ShipController : JobComponentSystem
     public static float3 shipPos;
     public static Translation targetPos;
     public static NativeArray<float3> posArray;
+    public static NativeArray<bool> checkPointArray;
 
     protected override void OnCreateManager()
     {
         shipPos = new float3();
         posArray = new NativeArray<float3>(1, Allocator.Persistent);
+        checkPointArray = new NativeArray<bool>(1, Allocator.Persistent);
     }
 
     protected override void OnDestroyManager()
     {
         base.OnDestroyManager();
         posArray.Dispose();
+        checkPointArray.Dispose();
     }
 
     protected override JobHandle OnUpdate(JobHandle handle)
@@ -33,6 +36,7 @@ public class ShipController : JobComponentSystem
         {
             targetPos = targetPos,
             posArray = posArray,
+            checkPointsArray = checkPointArray,
             deltaTime = Time.deltaTime,
             moveSpeed = 10,
             slowingDist = 30,
@@ -55,6 +59,9 @@ public class ShipController : JobComponentSystem
 
         [NativeDisableParallelForRestriction]
         public NativeArray<float3> posArray;
+
+        [NativeDisableParallelForRestriction]
+        public NativeArray<bool> checkPointsArray;
         public void Execute(Entity entity, int index, ref TargetData data, ref Translation trans)
         {
             var dir = targetPos.Value - trans.Value;
@@ -62,9 +69,7 @@ public class ShipController : JobComponentSystem
 
             if (distance <= stopRange)
             {
-                //data.inRange = true;
-
-                //return velocity * (1.0f - (damping * Time.deltaTime));
+                checkPointsArray[0] = true;
             }
             else
             {
@@ -79,7 +84,7 @@ public class ShipController : JobComponentSystem
 
                 trans.Value += (float3)outForce.normalized * weight;
                 //shipPos = trans.Value;
-                
+                checkPointsArray[0] = false;
             }
 
             posArray[0] = trans.Value;

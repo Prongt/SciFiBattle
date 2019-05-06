@@ -23,16 +23,13 @@ public class ValueAdjuster : MonoBehaviour
     [Range(1, 100)] public float maxForce = 1;
     [Range(1, 100)] public float maxNeighbourDist = 10;
     [Range(1, 100)] public float constrainWeight = 1;
-    public Transform target;
-    public Vector3 shipPos;
-    public static Vector3 cameraTarget;
+    //public Transform target;
+    //public Vector3 shipPos;
+    //public static Vector3 cameraTarget;
     private void Awake()
     {
         //BoidECS.targetPos = new Translation {Value = target.position};
-        shipPos = ShipController.posArray[0];
-        BoidECS.targetPos = new Translation { Value = shipPos };
-        ShipController.targetPos = new Translation { Value = target.position };
-        cameraTarget = shipPos;
+        
     }
     void Update()
     {
@@ -57,10 +54,6 @@ public class ValueAdjuster : MonoBehaviour
         BoidECS.maxNeighbourDist = maxNeighbourDist;
         BoidECS.constrainWeight = constrainWeight;
 
-        shipPos = ShipController.posArray[0];
-        BoidECS.targetPos = new Translation { Value = shipPos };
-        ShipController.targetPos = new Translation { Value = target.position };
-
-        cameraTarget = shipPos;
+        
     }
 }
