@@ -14,6 +14,9 @@ public class CameraController : MonoBehaviour
     private Vector3 acceleration;
     private Vector3 force;
     [SerializeField] private float mass;
+    [SerializeField] private float damping;
+    [SerializeField] private float banking;
+    [SerializeField] private float slowingDistance;
     private void Update()
     {
         targetPos = ValueAdjuster.cameraTarget;
@@ -21,39 +24,41 @@ public class CameraController : MonoBehaviour
         {
             return;
         }
-        var pos = (transform.position - targetPos) * followDistance;
-        transform.position = pos * Time.deltaTime;
+        //var pos = (transform.position - targetPos) * followDistance;
+        //transform.position = pos * Time.deltaTime;
 
-        var startPos = transform.position;
-        //var
-
-        transform.LookAt(targetPos);
+        //var startPos = transform.position;
 
 
-        //Vector3 newAcceleration = force / mass;
-        //acceleration = Vector3.Lerp(acceleration, newAcceleration, Time.deltaTime);
-        //velocity += acceleration * Time.deltaTime;
+        //transform.LookAt(targetPos);
+        //targetPos += offset;
+        force = ArriveForce(targetPos, slowingDistance);
 
-        //velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        Vector3 newAcceleration = force / mass;
+        acceleration = Vector3.Lerp(acceleration, newAcceleration, Time.deltaTime);
+        velocity += acceleration * Time.deltaTime;
 
-        //if (velocity.magnitude > float.Epsilon)
-        //{
-        //    Vector3 tempUp = Vector3.Lerp(transform.up, Vector3.up + (acceleration * banking), Time.deltaTime * 3.0f);
-        //    transform.LookAt(transform.position + velocity, tempUp);
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
-        //    transform.position += velocity * Time.deltaTime;
-        //    velocity *= (1.0f - (damping * Time.deltaTime));
-        //}
+        if (velocity.magnitude > float.Epsilon)
+        {
+            Vector3 tempUp = Vector3.Lerp(transform.up, Vector3.up + (acceleration * banking), Time.deltaTime * 3.0f);
+            //transform.LookAt(transform.position + velocity, tempUp);
+            transform.LookAt(targetPos, tempUp);
+
+            transform.position += velocity * Time.deltaTime;
+            velocity *= (1.0f - (damping * Time.deltaTime));
+        }
     }
 
     public Vector3 ArriveForce(Vector3 target, float slowingDistance = 15.0f)
     {
-        Vector3 toTarget = target - transform.position;
+        Vector3 toTarget = (target + offset) - transform.position;
 
         float distance = toTarget.magnitude;
-        if (distance < 0.1f)
+        if (distance < followDistance)
         {
-            return Vector3.zero;
+            return velocity * (1.0f - (damping * Time.deltaTime));
         }
         float ramped = maxSpeed * (distance / slowingDistance);
 

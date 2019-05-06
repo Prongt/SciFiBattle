@@ -35,8 +35,8 @@ public class ShipController : JobComponentSystem
             posArray = posArray,
             deltaTime = Time.deltaTime,
             moveSpeed = 10,
-            slowingDist = 10,
-            stopRange = 5,
+            slowingDist = 30,
+            stopRange = 15,
             weight = 1
         }.Schedule(this, handle);
 
@@ -64,6 +64,7 @@ public class ShipController : JobComponentSystem
             {
                 //data.inRange = true;
 
+                //return velocity * (1.0f - (damping * Time.deltaTime));
             }
             else
             {
@@ -78,10 +79,10 @@ public class ShipController : JobComponentSystem
 
                 trans.Value += (float3)outForce.normalized * weight;
                 //shipPos = trans.Value;
-                posArray[0] = trans.Value;
+                
             }
 
-            
+            posArray[0] = trans.Value;
         }
     }
 }

@@ -835,8 +835,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetPos: {x: 0, y: 0, z: 0}
-  offset: {x: 0, y: 0, z: 0}
-  followDistance: 1
+  offset: {x: 0, y: 5, z: 0}
+  followDistance: 30
+  maxSpeed: 900
+  mass: 1
+  damping: 60
+  banking: 1
+  slowingDistance: 60
 --- !u!1001 &1247280222522560932
 PrefabInstance:
   m_ObjectHideFlags: 0
