@@ -1135,12 +1135,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f38cc75a335a914b8f240229eed8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0, z: 0}
-  followDistance: 30
+  offset: {x: 0, y: 25, z: 0}
+  followDistance: 60
+  tempFollowDistance: 0
   maxSpeed: 900
   mass: 1
   damping: 60
-  banking: 1
+  banking: 5
 --- !u!1001 &1247280222522560932
 PrefabInstance:
   m_ObjectHideFlags: 0

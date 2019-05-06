@@ -87,12 +87,14 @@ public class StateController : MonoBehaviour
                     break;
                 case 1:
                     cameraTarget = boidStartingTarget.position;
+                    cameraController.tempFollowDistance = cameraController.followDistance * 8;
                     CameraController.targetPos = cameraTarget;
                     //TODO increase stopping range
                     break;
                 case 2:
                     cameraTarget = shipPos;
                     boidTargetVector = shipPos;
+                    cameraController.tempFollowDistance = cameraController.followDistance;
                     CameraController.targetPos = cameraTarget;
                     break;
                 case 3:
@@ -105,6 +107,7 @@ public class StateController : MonoBehaviour
                     cameraTarget = shipPos;
                     boidTargetVector = shipPos;
                     shipTargetVector = planet.position;
+                    cameraController.tempFollowDistance = cameraController.followDistance * 2;
                     CameraController.targetPos = cameraTarget;
                     break;
                 default:

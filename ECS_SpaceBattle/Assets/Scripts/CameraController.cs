@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     public static Vector3 targetPos;
     public Vector3 offset;
     public float followDistance;
-    //[HideInInspector] public float tempFollowDistance;
+    [HideInInspector] public float tempFollowDistance;
     public float maxSpeed;
     private Vector3 velocity;
     private Vector3 acceleration;
@@ -24,7 +24,8 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         targetPos = ShipController.posArray[0];
-        //IsAtTarget = false;
+
+        tempFollowDistance = followDistance;
     }
     private void Update()
     {
@@ -33,7 +34,7 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        force = ArriveForce(targetPos, followDistance);
+        force = ArriveForce(targetPos, tempFollowDistance);
 
         Vector3 newAcceleration = force / mass;
         acceleration = Vector3.Lerp(acceleration, newAcceleration, Time.deltaTime);
@@ -43,9 +44,9 @@ public class CameraController : MonoBehaviour
 
         if (velocity.magnitude > float.Epsilon)
         {
-            Vector3 tempUp = Vector3.Lerp(transform.up, Vector3.up + (acceleration * banking), Time.deltaTime * 3.0f);
+            //Vector3 tempUp = Vector3.Lerp(transform.up, Vector3.up + (acceleration * banking), Time.deltaTime * 3.0f);
             //transform.LookAt(transform.position + velocity, tempUp);
-            transform.LookAt(targetPos, tempUp);
+            transform.LookAt(targetPos);
 
             transform.position += velocity * Time.deltaTime;
             velocity *= (1.0f - (damping * Time.deltaTime));
@@ -54,7 +55,7 @@ public class CameraController : MonoBehaviour
 
     public bool CheckAtTarget(Vector3 t)
     {
-        if (math.distance(this.transform.position, t) < followDistance)
+        if (math.distance(this.transform.position, t) < tempFollowDistance)
         {
             return true;
         }

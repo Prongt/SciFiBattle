@@ -38,7 +38,7 @@ public class ShipController : JobComponentSystem
             posArray = posArray,
             checkPointsArray = checkPointArray,
             deltaTime = Time.deltaTime,
-            moveSpeed = 10,
+            moveSpeed = 1,
             slowingDist = 30,
             stopRange = 15,
             weight = 1
