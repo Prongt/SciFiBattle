@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class MeshCombiner : MonoBehaviour
 {
+
+#if UNITY_EDITOR
     public GameObject meshesToCombine;
 
     public void CreateObject()
@@ -95,7 +97,7 @@ public class MeshCombiner : MonoBehaviour
         foreach (Transform child in transform)
         {
             if (child != this)
-            Destroy(child.gameObject);
+                Destroy(child.gameObject);
         }
 
     }
@@ -103,12 +105,14 @@ public class MeshCombiner : MonoBehaviour
     private int Contains(ArrayList searchList, string searchName)
     {
         for (var i = 0; i < searchList.Count; i++)
-            if (((Material) searchList[i]).name == searchName)
+            if (((Material)searchList[i]).name == searchName)
                 return i;
         return -1;
     }
+#endif
 }
 
+# if UNITY_EDITOR
 public struct CombineMeshJob : IJob
 {
     public GameObject meshesToCombine;
@@ -134,3 +138,4 @@ public struct CombineMeshJob : IJob
         combinedMesh.CombineMeshes(childList.ToArray());
     }
 }
+#endif
