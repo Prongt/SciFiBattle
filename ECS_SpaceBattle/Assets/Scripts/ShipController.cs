@@ -32,7 +32,6 @@ public class ShipController : JobComponentSystem
         var ArriveJob = new ArriveJob
         {
             targetPos = targetPos,
-            shipPos = shipPos,
             posArray = posArray,
             deltaTime = Time.deltaTime,
             moveSpeed = 10,
@@ -49,7 +48,6 @@ public class ShipController : JobComponentSystem
     {
         public float deltaTime;
         public Translation targetPos;
-        public float3 shipPos;
         public float weight;
         public float moveSpeed;
         public float slowingDist;
