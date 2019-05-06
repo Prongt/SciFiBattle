@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class StateController : MonoBehaviour
 {
-    public static Vector3 cameraTarget;
-    public static Vector3 boidTarget;
+    //public static Vector3 cameraTarget;
+    //public static Vector3 boidTarget;
     //public static Vector3 shipTarget;
     public Vector3 shipPos;
-    public Transform target;
+    public Transform shipTarget;
+    public Transform boidTarget;
 
     WaitForSeconds waitForSeconds;
     bool stage1 = false;
@@ -20,8 +21,8 @@ public class StateController : MonoBehaviour
         waitForSeconds = new WaitForSeconds(0.1f);
 
         shipPos = ShipController.posArray[0];
-        BoidECS.targetPos = new Translation { Value = shipPos };
-        ShipController.targetPos = new Translation { Value = target.position };
+        BoidECS.targetPos = new Translation { Value = boidTarget.position };
+        ShipController.targetPos = new Translation { Value = shipTarget.position };
         //cameraTarget = shipPos;
         //StartCoroutine(StateControllerCoroutine());
 
@@ -33,8 +34,8 @@ public class StateController : MonoBehaviour
     private void Update()
     {
         shipPos = ShipController.posArray[0];
-        BoidECS.targetPos = new Translation { Value = shipPos };
-        ShipController.targetPos = new Translation { Value = target.position };
+        BoidECS.targetPos = new Translation { Value = boidTarget.position };
+        ShipController.targetPos = new Translation { Value = shipTarget.position };
 
         //cameraTarget = shipPos;
 

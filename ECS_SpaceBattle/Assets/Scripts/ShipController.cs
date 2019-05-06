@@ -48,7 +48,7 @@ public class ShipController : JobComponentSystem
         return ArriveJob;
     }
 
-    private struct ArriveJob : IJobForEachWithEntity<TargetData, Translation>
+    private struct ArriveJob : IJobForEachWithEntity<TargetData, Translation, Rotation>
     {
         public float deltaTime;
         public Translation targetPos;
@@ -62,7 +62,7 @@ public class ShipController : JobComponentSystem
 
         [NativeDisableParallelForRestriction]
         public NativeArray<bool> checkPointsArray;
-        public void Execute(Entity entity, int index, ref TargetData data, ref Translation trans)
+        public void Execute(Entity entity, int index, ref TargetData data, ref Translation trans, ref Rotation rot)
         {
             var dir = targetPos.Value - trans.Value;
             var distance = ((Vector3)dir).magnitude;
@@ -83,6 +83,7 @@ public class ShipController : JobComponentSystem
                 
 
                 trans.Value += (float3)outForce.normalized * weight;
+                rot.Value = Quaternion.LookRotation(outForce.normalized);
                 //shipPos = trans.Value;
                 checkPointsArray[0] = false;
             }
