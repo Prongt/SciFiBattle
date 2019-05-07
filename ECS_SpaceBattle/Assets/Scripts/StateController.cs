@@ -96,7 +96,7 @@ public class StateController : MonoBehaviour
                 case 2:
                     cameraTarget = shipPos;
                     boidTargetVector = shipPos;
-                    cameraController.tempFollowDistance = cameraController.followDistance;
+                    cameraController.tempFollowDistance = cameraController.followDistance * 2;
                     CameraController.targetPos = cameraTarget;
                     break;
                 case 3:
