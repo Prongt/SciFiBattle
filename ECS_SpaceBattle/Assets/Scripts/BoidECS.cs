@@ -39,7 +39,7 @@ public class BoidECS : JobComponentSystem
     public static bool BlackHole = false;
 
     public BufferFromEntity<PosRot> posRotBuffer;
-    public BufferFromEntity<Force> forceBuffer;
+
     protected override void OnCreateManager()
     {
 
@@ -80,7 +80,6 @@ public class BoidECS : JobComponentSystem
 
         JobHandle neighbourJob = new NeighbourJob
         {
-            maxNeighbours = maxNeighbours,
             cellMap = cellMap,
             maxNeighbourDist = maxNeighbourDist,
             neighbourBuffer = GetBufferFromEntity<PosRot>(false)
@@ -92,7 +91,6 @@ public class BoidECS : JobComponentSystem
             deltaTime = Time.deltaTime,
             targetPos = targetPos,
             weight = arrive,
-            stopRange = stopRange,
             slowingDist = slowingDistance,
             moveSpeed = boidMaxSpeed
 
@@ -100,7 +98,6 @@ public class BoidECS : JobComponentSystem
 
         JobHandle seperationJob = new SeperationJob
         {
-            maxNeighbours = maxNeighbours,
             weight = seperation,
             neighbourBuffer = GetBufferFromEntity<PosRot>(true)
         }.Schedule(this, arriveJob);
@@ -142,9 +139,7 @@ public class BoidECS : JobComponentSystem
             boidDamping = boidDamping,
             boidMass = boidMass,
             boidMaxSpeed = boidMaxSpeed,
-            banking = boidBanking,
             weight = weight,
-            maxForce = maxForce,
             IsBlackHole = BlackHole
         }.Schedule(this, constrainJob);
 
@@ -184,8 +179,6 @@ public class BoidECS : JobComponentSystem
         public float boidDamping;
         public float boidMaxSpeed;
         public float weight;
-        public float banking;
-        public float maxForce;
 
         public bool IsBlackHole;
 
@@ -227,9 +220,6 @@ public class BoidECS : JobComponentSystem
     [BurstCompile]
     private struct SeperationJob : IJobForEachWithEntity<EnemyData, Translation, Rotation>
     {
-
-
-        public int maxNeighbours;
         public float weight;
 
         [NativeDisableParallelForRestriction]
@@ -333,7 +323,7 @@ public class BoidECS : JobComponentSystem
         public float weight;
         public float moveSpeed;
         public float slowingDist;
-        public float stopRange;
+
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
             //return;
@@ -391,22 +381,19 @@ public class BoidECS : JobComponentSystem
         public float maxSpeed;
         public void Execute(Entity entity, int index, ref EnemyData data, ref Translation trans, ref Rotation rot)
         {
-            return;
+            //return;
 
             float3 desired = targetPos.Value - trans.Value;
-            if (((Vector3)desired).magnitude <= fleeDistance)
+            if (((Vector3)desired).magnitude <= fleeDist)
             {
                 ((Vector3)desired).Normalize();
                 desired *= data.velocity - maxSpeed;
                 float3 force = desired;
-                float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
-                data.force = outForce;
+                //float3 outForce = ((Vector3)data.force + ((Vector3)force * weight));
+                //data.force = outForce;
 
-                data.fleeing = true;
-            }
-            else
-            {
-                data.fleeing = false;
+                Vector3 outForce = force;
+                data.force += (float3)outForce.normalized * weight;
             }
         }
     }
@@ -418,7 +405,7 @@ public class BoidECS : JobComponentSystem
         [NativeDisableParallelForRestriction]
         public NativeMultiHashMap<int, NeighbourData> cellMap;
 
-        public int maxNeighbours;
+
 
         public float maxNeighbourDist;
 

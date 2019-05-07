@@ -167,7 +167,7 @@ MonoBehaviour:
   AllignmentWeight: 30
   SeperationWeight: 30
   CohesionWeight: 30
-  fleeWeight: 1
+  fleeWeight: 30
   cellSize: 10
   gridSize: 2000
   boidMass: 10

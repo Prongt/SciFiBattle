@@ -10,6 +10,7 @@ public class ValueAdjuster : MonoBehaviour
     [Range(1, 100)] public float SeperationWeight = 1;
     [Range(1, 100)] public float CohesionWeight = 1;
     [Range(1, 100)] public float fleeWeight = 1;
+    [Range(1, 100)] public float fleeDistance = 1;
     [Range(1, 100)] public float cellSize = 10;
     [Range(1, 10000)] public float gridSize = 2000;
     [Range(1, 100)] public float boidMass = 1;
@@ -53,7 +54,8 @@ public class ValueAdjuster : MonoBehaviour
         BoidECS.maxForce = maxForce;
         BoidECS.maxNeighbourDist = maxNeighbourDist;
         BoidECS.constrainWeight = constrainWeight;
+        BoidECS.fleeDistance = fleeDistance;
 
-        
+
     }
 }
